@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { budgetApi } from "../services/api.js";
+import { budgetApi, goalsApi } from "../services/api.js";
 
 // Import all components
 import BudgetHeader from "../components/budget/BudgetHeader";
@@ -31,21 +31,26 @@ const MONTHS = [
   "July", "August", "September", "October", "November", "December"
 ];
 
-// Category icon mapping for API data
+// Category icon mapping
 const CATEGORY_ICONS = {
   "Housing": "🏠",
+  "Housing & Utilities": "🏠",
   "Housing & Rent": "🏠",
   "Food": "🍕",
   "Food & Groceries": "🍕",
   "Groceries": "🍕",
+  "Groceries & Essentials": "🍕",
   "Transportation": "🚗",
   "Transport": "🚗",
   "Utilities": "💡",
   "Entertainment": "🎬",
+  "Dining & Lifestyle": "🎬",
   "Healthcare": "🏥",
   "Health": "🏥",
+  "Health & Medical": "🏥",
   "Shopping": "🛍️",
   "Savings": "💰",
+  "Savings & Investments": "💰",
   "Emergency": "🛡️",
   "Education": "📚",
   "Personal": "👤",
@@ -54,14 +59,12 @@ const CATEGORY_ICONS = {
 };
 
 const getCategoryIcon = (categoryName) => {
-  // Try exact match first
-  if (CATEGORY_ICONS[categoryName]) {
-    return CATEGORY_ICONS[categoryName];
-  }
-  // Try case-insensitive match
+  if (! categoryName) return "📦";
+  if (CATEGORY_ICONS[categoryName]) return CATEGORY_ICONS[categoryName];
+  
   const lowerName = categoryName.toLowerCase();
-  for (const [key, value] of Object.entries(CATEGORY_ICONS)) {
-    if (key.toLowerCase() === lowerName || lowerName.includes(key.toLowerCase())) {
+  for (const [key, value] of Object. entries(CATEGORY_ICONS)) {
+    if (key. toLowerCase() === lowerName || lowerName.includes(key. toLowerCase())) {
       return value;
     }
   }
@@ -114,16 +117,16 @@ export default function BudgetPage() {
     const overages = [];
     const underages = [];
     
-    if (!data?.expenseCategories) return { overages, underages };
+    if (! data?. expenseCategories) return { overages, underages };
     
     data.expenseCategories.forEach(cat => {
       if (cat.allocated === 0) return;
       const diff = cat.spent - cat.allocated;
       const percentage = (cat.spent / cat.allocated) * 100;
       if (diff > 0) {
-        overages.push({ ...cat, overage: diff, percentage: percentage.toFixed(1) });
+        overages. push({ ... cat, overage: diff, percentage: percentage. toFixed(1) });
       } else if (percentage < 70) {
-        underages.push({ ...cat, underage: Math.abs(diff), percentage: percentage.toFixed(1) });
+        underages.push({ ... cat, underage: Math.abs(diff), percentage: percentage.toFixed(1) });
       }
     });
     return { overages, underages };
@@ -133,21 +136,21 @@ export default function BudgetPage() {
     return overages.map(overage => {
       const possibleSources = underages.filter(u => u.underage >= overage.overage * 0.3);
       return {
-        id: `adj-${overage.id}`,
+        id: `adj-${overage. id}`,
         categoryId: overage.id,
-        categoryName: overage.name,
-        categoryIcon: overage.icon,
-        overage: overage.overage,
+        categoryName: overage. name,
+        categoryIcon: overage. icon,
+        overage: overage. overage,
         currentAllocated: overage.allocated,
         suggestedAllocated: overage.allocated + overage.overage,
         compensationSources: possibleSources.map(s => ({
           id: s.id,
           name: s.name,
           available: s.underage,
-          suggested: Math.min(s.underage, overage.overage / possibleSources.length)
+          suggested: Math.min(s.underage, overage. overage / possibleSources.length)
         })),
         options: [
-          { type: "keep_same", label: "Keep budget same", description: `Maintain ₹${overage.allocated.toLocaleString()} for ${overage.name}. ` },
+          { type: "keep_same", label: "Keep budget same", description: `Maintain ₹${overage. allocated. toLocaleString()} for ${overage.name}. ` },
           { type: "adjust_increase", label: "Increase budget", description: `Increase to ₹${(overage.allocated + overage.overage).toLocaleString()} based on actual spending.` },
           { type: "redistribute", label: "Redistribute from other categories", description: `Take from underutilized categories.` }
         ],
@@ -157,7 +160,9 @@ export default function BudgetPage() {
   }, []);
 
   const calculateTotals = useCallback(() => {
-    if (!budgetData?.expenseCategories) return { expenseAllocated: 0, expenseSpent: 0, remaining: 0, availableToSave: 0 };
+    if (!budgetData?. expenseCategories) {
+      return { expenseAllocated: 0, expenseSpent: 0, remaining: 0, availableToSave: 0 };
+    }
     const expenseAllocated = budgetData.expenseCategories.reduce((sum, cat) => sum + (cat.allocated || 0), 0);
     const expenseSpent = budgetData.expenseCategories.reduce((sum, cat) => sum + (cat.spent || 0), 0);
     return {
@@ -168,18 +173,18 @@ export default function BudgetPage() {
     };
   }, [budgetData]);
 
-  const generateAlerts = useCallback((data) => {
+  const generateLocalAlerts = useCallback((data) => {
     const newAlerts = [];
 
-    if (data?.expenseCategories) {
-      data.expenseCategories.forEach(cat => {
+    if (data?. expenseCategories) {
+      data. expenseCategories. forEach(cat => {
         if (cat.allocated === 0) return;
         const percentage = (cat.spent / cat.allocated) * 100;
         if (percentage > 100) {
           newAlerts.push({
             id: `over-${cat.id}`,
             type: "error",
-            message: `${cat.name} exceeded by ₹${(cat.spent - cat.allocated).toLocaleString()}`,
+            message: `${cat.name} exceeded by ₹${(cat.spent - cat.allocated). toLocaleString()}`,
             category: cat.name
           });
         }
@@ -187,12 +192,12 @@ export default function BudgetPage() {
     }
 
     if (data?.savings && data.savings.allocated > 0) {
-      const savingsPercentage = (data.savings.contributed / data.savings.allocated) * 100;
+      const savingsPercentage = (data.savings. contributed / data.savings. allocated) * 100;
       if (savingsPercentage >= 100) {
-        newAlerts.push({
+        newAlerts. push({
           id: "savings-goal",
           type: "success",
-          message: `Savings goal met! ₹${data.savings.contributed.toLocaleString()} saved this month.`,
+          message: `Savings goal met! ₹${data. savings.contributed.toLocaleString()} saved this month.`,
           category: "Savings"
         });
       } else if (savingsPercentage < 50) {
@@ -218,136 +223,86 @@ export default function BudgetPage() {
       }
     }
 
-    setAlerts(newAlerts);
+    return newAlerts;
   }, []);
 
   // ========== Transform API Data to Component Format ==========
-  // This follows the same data structure as Insights.jsx uses from /analysis/overview
-  const transformApiData = useCallback((overviewData, breakdownData, trendsData, alertsData) => {
-    console.log('API Response - Overview:', overviewData);
-    console.log('API Response - Breakdown:', breakdownData);
+  // Aligned with actual backend response structures
+  const transformApiData = useCallback((dashboardData, breakdownData, trendsData, alertsData, savingsData) => {
+    console.log('API Response - Dashboard:', dashboardData);
+    console. log('API Response - Breakdown:', breakdownData);
     console.log('API Response - Trends:', trendsData);
     console.log('API Response - Alerts:', alertsData);
+    console.log('API Response - Savings:', savingsData);
 
+    // Extract monthly income from dashboard
+    const monthlyIncome = dashboardData?.monthly_income || 0;
+
+    // Transform budget breakdown to expense categories
+    // Backend returns: Array of { category, allocated, spent, remaining, status }
     const expenseCategories = [];
     let categoryId = 1;
-    let monthlyIncome = 0;
 
-    // Primary source: overview data (same as Insights.jsx uses)
-    if (overviewData?.budget_plan?.breakdown) {
-      // Calculate monthly income from budget breakdown
-      monthlyIncome = Object.values(overviewData.budget_plan.breakdown).reduce(
-        (sum, item) => sum + (item.amount || 0), 0
-      );
-
-      Object.entries(overviewData.budget_plan.breakdown).forEach(([name, data]) => {
-        // Skip savings and emergency from expense categories
-        const lowerName = name.toLowerCase();
-        if (lowerName === 'savings' || lowerName === 'emergency') return;
+    if (Array.isArray(breakdownData)) {
+      breakdownData. forEach(item => {
+        // Skip savings-related categories from expense list
+        const lowerCat = (item.category || '').toLowerCase();
+        if (lowerCat.includes('savings') || lowerCat.includes('investment')) return;
 
         expenseCategories.push({
           id: categoryId++,
-          name: name,
-          allocated: data.amount || 0,
-          spent: overviewData.actual_spending?.[name] || 0,
-          icon: getCategoryIcon(name)
+          name: item. category || 'Unknown',
+          allocated: Number(item.allocated) || 0,
+          spent: Number(item.spent) || 0,
+          remaining: Number(item.remaining) || 0,
+          status: item.status || 'On Track',
+          icon: getCategoryIcon(item.category)
         });
       });
     }
 
-    // Secondary source: budget-breakdown endpoint
-    if (expenseCategories.length === 0 && breakdownData) {
-      // Handle different possible response structures
-      const breakdown = breakdownData.breakdown || breakdownData.categories || breakdownData;
-      
-      if (typeof breakdown === 'object' && breakdown !== null) {
-        Object.entries(breakdown).forEach(([name, data]) => {
-          const lowerName = name.toLowerCase();
-          if (lowerName === 'savings' || lowerName === 'emergency') return;
+    // Extract savings data
+    // Use savings info from goalsApi.getSavingsInfo() response
+    const savingsInfo = {
+      allocated: Number(savingsData?. savings_allocated) || 0,
+      contributed: Number(savingsData?.total_funded) || 0,
+      available: Number(savingsData?.savings_available) || 0,
+      totalFunds: Number(savingsData?.total_funds) || 0,
+      monthlyRate: Number(savingsData?.monthly_savings_rate) || 0,
+    };
 
-          // Handle different data structures
-          const allocated = data.allocated || data.amount || data.budget || 0;
-          const spent = data.spent || data.actual || 0;
-
-          expenseCategories.push({
-            id: categoryId++,
-            name: name,
-            allocated: allocated,
-            spent: spent,
-            icon: getCategoryIcon(name)
-          });
-        });
-      }
-
-      monthlyIncome = breakdownData.monthly_income || breakdownData.income || 0;
-    }
-
-    // Extract savings info
-    let savingsData = { allocated: 0, contributed: 0, available: 0 };
-    if (overviewData?.budget_plan?.breakdown?.Savings) {
-      const savingsBudget = overviewData.budget_plan.breakdown.Savings;
-      savingsData = {
-        allocated: savingsBudget.amount || 0,
-        contributed: overviewData.actual_spending?.Savings || 0,
-        available: (savingsBudget.amount || 0) - (overviewData.actual_spending?.Savings || 0)
-      };
-    } else if (overviewData?.budget_plan?.breakdown?.savings) {
-      const savingsBudget = overviewData.budget_plan.breakdown.savings;
-      savingsData = {
-        allocated: savingsBudget.amount || 0,
-        contributed: overviewData.actual_spending?.savings || 0,
-        available: (savingsBudget.amount || 0) - (overviewData.actual_spending?.savings || 0)
-      };
-    }
-
-    // Extract emergency fund info from overview
-    let emergencyData = { allocated: 0, contributed: 0, current: 0, target: 0 };
-    if (overviewData?.emergency_fund) {
-      emergencyData = {
-        allocated: overviewData.emergency_fund.monthly_contribution || 0,
-        contributed: overviewData.emergency_fund.monthly_contribution || 0,
-        current: overviewData.emergency_fund.current_amount || 0,
-        target: overviewData.emergency_fund.target_amount || 0
-      };
-    }
+    // Emergency fund data - derive from savings or set defaults
+    const emergencyInfo = {
+      allocated: 0,
+      contributed: 0,
+      current: 0,
+      target: savingsInfo.totalFunds * 6 || 100000, // 6 months of savings as target
+    };
 
     // Transform trends data for history chart
+    // Backend returns: Array of { month, year, expense, income }
     let historyData = [];
-    if (trendsData) {
-      // Handle array format
-      if (Array.isArray(trendsData)) {
-        historyData = trendsData.map(trend => ({
-          month: trend.month || trend.period || '',
-          spent: trend.spent || trend.total_spent || trend.actual || 0,
-          budget: trend.budget || trend.total_budget || trend.allocated || 0,
-          saved: (trend.budget || trend.total_budget || 0) - (trend.spent || trend.total_spent || 0)
-        }));
-      }
-      // Handle object with trends array
-      else if (trendsData.trends && Array.isArray(trendsData.trends)) {
-        historyData = trendsData.trends.map(trend => ({
-          month: trend.month || trend.period || '',
-          spent: trend.spent || trend.total_spent || trend.actual || 0,
-          budget: trend.budget || trend.total_budget || trend.allocated || 0,
-          saved: (trend.budget || trend.total_budget || 0) - (trend.spent || trend.total_spent || 0)
-        }));
-      }
-      // Handle object with monthly data
-      else if (typeof trendsData === 'object') {
-        historyData = Object.entries(trendsData).map(([month, data]) => ({
-          month: month,
-          spent: data.spent || data.actual || 0,
-          budget: data.budget || data.allocated || 0,
-          saved: (data.budget || 0) - (data.spent || 0)
-        }));
-      }
+    if (Array.isArray(trendsData)) {
+      historyData = trendsData.map(trend => ({
+        month: trend.month || '',
+        year: trend.year || new Date().getFullYear(),
+        spent: Number(trend. expense) || 0,
+        income: Number(trend. income) || 0,
+        budget: monthlyIncome, // Use monthly income as budget reference
+        saved: Math.max(0, (Number(trend.income) || 0) - (Number(trend.expense) || 0))
+      }));
     }
 
     return {
       monthlyIncome,
+      totalExpenses: dashboardData?.total_expenses || 0,
+      netSavings: dashboardData?.cash_flow_savings || 0,
+      liquidCash: dashboardData?. available_liquid_cash || 0,
+      savingsRate: dashboardData?.savings_rate || 0,
+      period: dashboardData?. period || '',
       expenseCategories,
-      savings: savingsData,
-      emergency: emergencyData,
+      savings: savingsInfo,
+      emergency: emergencyInfo,
       historyData,
     };
   }, []);
@@ -360,48 +315,67 @@ export default function BudgetPage() {
     try {
       // Fetch all budget-related data in parallel
       const results = await Promise.allSettled([
-        budgetApi.getOverview(),           // Same endpoint as Insights.jsx
-        budgetApi.getBudgetBreakdown(),    // Budget breakdown
-        budgetApi.getTrends(),             // 6 month trends
-        budgetApi.getAlerts(),             // Active alerts
+        budgetApi.getDashboardData(),                              // Dashboard summary
+        budgetApi.getBudgetBreakdown(selectedMonth + 1, selectedYear), // Budget breakdown with month/year
+        budgetApi.getTrends(),                                     // 6 month trends
+        budgetApi.getAlerts(),                                     // Active alerts from agent
+        goalsApi.getSavingsInfo(),                                 // Savings info from goals API
       ]);
 
-      const overviewData = results[0].status === 'fulfilled' ? results[0].value : null;
-      const breakdownData = results[1].status === 'fulfilled' ? results[1].value : null;
-      const trendsData = results[2].status === 'fulfilled' ?  results[2].value : null;
-      const alertsData = results[3].status === 'fulfilled' ? results[3].value : null;
+      const dashboardData = results[0].status === 'fulfilled' ? results[0]. value : null;
+      const breakdownData = results[1].status === 'fulfilled' ? results[1].value : [];
+      const trendsData = results[2].status === 'fulfilled' ? results[2].value : [];
+      const alertsData = results[3].status === 'fulfilled' ? results[3].value : [];
+      const savingsData = results[4].status === 'fulfilled' ? results[4].value : null;
 
-      // Check if we got any data
-      if (!overviewData && !breakdownData) {
-        throw new Error('Failed to load budget data from API');
-      }
+      // Log any failed requests for debugging
+      results.forEach((result, index) => {
+        if (result. status === 'rejected') {
+          console.warn(`API call ${index} failed:`, result.reason);
+        }
+      });
 
       // Transform API data to component format
-      const transformedData = transformApiData(overviewData, breakdownData, trendsData, alertsData);
-
-      if (transformedData.expenseCategories.length === 0) {
-        setError('No budget categories found. Please set up your budget first.');
-      }
+      const transformedData = transformApiData(
+        dashboardData,
+        breakdownData,
+        trendsData,
+        alertsData,
+        savingsData
+      );
 
       setBudgetData(transformedData);
-      generateAlerts(transformedData);
 
-      // Handle API alerts
-      if (alertsData && Array.isArray(alertsData) && alertsData.length > 0) {
-        const formattedAlerts = alertsData.map((alert, idx) => ({
-          id: alert.id || `api-alert-${idx}`,
-          type: alert.severity || alert.type || "info",
-          message: alert.message || alert.description,
-          category: alert.category || "General"
-        }));
-        setAlerts(prev => [...formattedAlerts, ...prev]);
+      // Generate local alerts based on data
+      const localAlerts = generateLocalAlerts(transformedData);
+
+      // Transform backend alerts
+      // Backend returns: Array of { id, title, message, date }
+      const backendAlerts = Array.isArray(alertsData)
+        ? alertsData.map(alert => ({
+            id: `api-${alert.id}`,
+            type: "warning",
+            message: alert.message || alert.title,
+            category: "Agent Alert",
+            date: alert.date
+          }))
+        : [];
+
+      setAlerts([...backendAlerts, ... localAlerts]);
+
+      if (transformedData. expenseCategories. length === 0 && ! dashboardData) {
+        setError('No budget data found. Please upload transactions or set up your budget.');
       }
 
     } catch (err) {
       console.error('Error fetching budget data:', err);
-      setError(err.message || 'Failed to load budget data. Please try again.');
+      setError(err.message || 'Failed to load budget data.  Please try again.');
       setBudgetData({
         monthlyIncome: 0,
+        totalExpenses: 0,
+        netSavings: 0,
+        liquidCash: 0,
+        savingsRate: 0,
         expenseCategories: [],
         savings: { allocated: 0, contributed: 0, available: 0 },
         emergency: { allocated: 0, contributed: 0, current: 0, target: 0 },
@@ -410,7 +384,7 @@ export default function BudgetPage() {
     } finally {
       setLoading(false);
     }
-  }, [generateAlerts, transformApiData]);
+  }, [selectedMonth, selectedYear, generateLocalAlerts, transformApiData]);
 
   useEffect(() => {
     fetchBudgetData();
@@ -428,15 +402,22 @@ export default function BudgetPage() {
     try {
       addAgentMessage("📊 Analyzing your income and spending patterns...");
 
-      const result = await budgetApi.generateBudget({
-        month: selectedMonth + 1,
-        year: selectedYear
-      });
+      // Backend doesn't accept month/year params for budget generation
+      const result = await budgetApi.generateBudget();
 
       console.log('Generate Budget Response:', result);
 
       if (result) {
         addAgentMessage("✅ Budget generated successfully!");
+        
+        // Log the AI response structure
+        if (result.budget_plan) {
+          addAgentMessage(`📋 AI has created a personalized budget plan. `);
+        }
+        if (result.recommendations && result.recommendations.length > 0) {
+          addAgentMessage(`💡 ${result.recommendations.length} recommendations available.`);
+        }
+
         addAgentMessage("📊 Refreshing your budget data...");
 
         // Wait a moment then refresh data
@@ -451,25 +432,33 @@ export default function BudgetPage() {
       }
     } catch (err) {
       console.error('Error generating budget:', err);
-      addAgentMessage(`❌ Error generating budget: ${err.response?.data?.detail || err.message}`);
+      addAgentMessage(`❌ Error generating budget: ${err. response?.data?.detail || err.message}`);
       setAgentActive(false);
     } finally {
       setIsGeneratingBudget(false);
     }
-  }, [selectedMonth, selectedYear, addAgentMessage, fetchBudgetData]);
+  }, [addAgentMessage, fetchBudgetData]);
 
   // ========== AI Analysis ==========
-  const startBudgetAnalysis = useCallback(() => {
-    if (!budgetData || !budgetData.expenseCategories || budgetData.expenseCategories.length === 0) {
+  const startBudgetAnalysis = useCallback(async () => {
+    if (!budgetData || !budgetData. expenseCategories || budgetData.expenseCategories.length === 0) {
       setShowAgentPanel(true);
-      addAgentMessage("⚠️ No budget data available for analysis. Please ensure your budget is set up.");
+      addAgentMessage("⚠️ No budget data available for analysis.  Please ensure you have uploaded transactions.");
       return;
     }
 
     setAgentActive(true);
     setShowAgentPanel(true);
     setAgentMessages([]);
-    addAgentMessage("🔍 Starting budget analysis for " + MONTHS[selectedMonth] + "...");
+    addAgentMessage("🔍 Starting budget analysis for " + MONTHS[selectedMonth] + ".. .");
+
+    // Trigger backend analysis
+    try {
+      await budgetApi.triggerAnalysis();
+      addAgentMessage("📡 Agent analysis triggered on server.. .");
+    } catch (err) {
+      console.warn('Backend analysis trigger failed:', err);
+    }
 
     setTimeout(() => {
       const { overages, underages } = analyzeBudget(budgetData);
@@ -481,38 +470,45 @@ export default function BudgetPage() {
           const savingsPercentage = (budgetData.savings.contributed / budgetData.savings.allocated) * 100;
           if (savingsPercentage < 100) {
             setTimeout(() => {
-              addAgentMessage(`💡 You've saved ₹${budgetData.savings.contributed.toLocaleString()} of your ₹${budgetData.savings.allocated.toLocaleString()} savings goal (${savingsPercentage.toFixed(0)}%). Consider allocating more! `);
+              addAgentMessage(`💡 You've saved ₹${budgetData.savings.contributed.toLocaleString()} of your ₹${budgetData.savings.allocated.toLocaleString()} savings goal (${savingsPercentage.toFixed(0)}%). `);
             }, 1000);
           }
         }
 
         if (budgetData.emergency && budgetData.emergency.target > 0) {
-          const emergencyPercentage = (budgetData.emergency.current / budgetData.emergency.target) * 100;
+          const emergencyPercentage = (budgetData.emergency.current / budgetData. emergency.target) * 100;
           if (emergencyPercentage < 100) {
             setTimeout(() => {
-              addAgentMessage(`🛡️ Emergency fund is at ${emergencyPercentage.toFixed(0)}% of your target. Keep building it!`);
+              addAgentMessage(`🛡️ Emergency fund is at ${emergencyPercentage. toFixed(0)}% of your target.  Keep building it!`);
             }, 2000);
           }
+        }
+
+        // Show savings rate info
+        if (budgetData.savingsRate > 0) {
+          setTimeout(() => {
+            addAgentMessage(`📈 Your current savings rate is ${budgetData.savingsRate}%.`);
+          }, 2500);
         }
 
         setAgentActive(false);
         return;
       }
 
-      const totalOverage = overages.reduce((sum, o) => sum + o.overage, 0);
+      const totalOverage = overages.reduce((sum, o) => sum + o. overage, 0);
       addAgentMessage(`⚠️ Found ${overages.length} category(ies) over budget with total overage of ₹${totalOverage.toLocaleString()}.`);
 
       setTimeout(() => {
         overages.forEach((overage, idx) => {
           setTimeout(() => {
-            addAgentMessage(`📊 ${overage.icon} ${overage.name}: Exceeded by ₹${overage.overage.toLocaleString()} (${overage.percentage}% of budget)`);
+            addAgentMessage(`📊 ${overage.icon} ${overage. name}: Exceeded by ₹${overage.overage.toLocaleString()} (${overage.percentage}% of budget)`);
           }, idx * 600);
         });
         
         setTimeout(() => {
           const suggestions = generateAdjustmentSuggestions(overages, underages);
           setPendingAdjustments(suggestions);
-          addAgentMessage("🤖 I've prepared adjustment options. Please review each category below.");
+          addAgentMessage("🤖 I've prepared adjustment options.  Please review each category below.");
         }, overages.length * 600 + 500);
       }, 1000);
     }, 1500);
@@ -521,7 +517,7 @@ export default function BudgetPage() {
   // ========== Event Handlers ==========
   const handleAdjustmentChoice = useCallback((adjustmentId, choice, customValue = null) => {
     const adjustment = pendingAdjustments.find(a => a.id === adjustmentId);
-    if (!adjustment) return;
+    if (! adjustment) return;
 
     let userMessage = "";
     let resultMessage = "";
@@ -541,10 +537,10 @@ export default function BudgetPage() {
         userMessage = `Redistribute to ${adjustment.categoryName}`;
         newBudgetValue = adjustment.currentAllocated + adjustment.overage;
         resultMessage = `✓ Redistributing funds to ${adjustment.categoryName}. `;
-        if (adjustment.compensationSources.length > 0) {
+        if (adjustment.compensationSources. length > 0) {
           const perSource = adjustment.overage / adjustment.compensationSources.length;
           setBudgetData(prev => ({
-            ...prev,
+            ... prev,
             expenseCategories: prev.expenseCategories.map(cat => {
               const source = adjustment.compensationSources.find(s => s.id === cat.id);
               return source ? { ...cat, allocated: cat.allocated - perSource } : cat;
@@ -555,7 +551,7 @@ export default function BudgetPage() {
       case "custom":
         userMessage = `Set custom budget of ₹${customValue}`;
         newBudgetValue = parseFloat(customValue);
-        resultMessage = `✓ ${adjustment.categoryName} budget set to ₹${newBudgetValue.toLocaleString()}.`;
+        resultMessage = `✓ ${adjustment.categoryName} budget set to ₹${newBudgetValue. toLocaleString()}.`;
         break;
       default:
         return;
@@ -565,18 +561,18 @@ export default function BudgetPage() {
       id: Date.now(),
       type: "user",
       message: userMessage,
-      timestamp: new Date().toLocaleTimeString()
+      timestamp: new Date(). toLocaleTimeString()
     }]);
 
     setBudgetData(prev => ({
-      ...prev,
+      ... prev,
       expenseCategories: prev.expenseCategories.map(cat =>
         cat.id === adjustment.categoryId ? { ...cat, allocated: newBudgetValue, adjusted: true } : cat
       )
     }));
 
     setPendingAdjustments(prev =>
-      prev.map(a => a.id === adjustmentId ? { ...a, status: "resolved", choice } : a)
+      prev.map(a => a.id === adjustmentId ? { ... a, status: "resolved", choice } : a)
     );
 
     setTimeout(() => {
@@ -604,11 +600,11 @@ export default function BudgetPage() {
   }, []);
 
   const handleSaveCategory = useCallback(() => {
-    if (!editingCategory) return;
+    if (! editingCategory) return;
     setBudgetData(prev => ({
-      ...prev,
+      ... prev,
       expenseCategories: prev.expenseCategories.map(cat =>
-        cat.id === editingCategory.id ? editingCategory : cat
+        cat.id === editingCategory. id ? editingCategory : cat
       )
     }));
     setEditingCategory(null);
@@ -623,13 +619,13 @@ export default function BudgetPage() {
     const newCat = {
       id: Date.now(),
       name: newCategory.name,
-      allocated: parseFloat(newCategory.allocated),
+      allocated: parseFloat(newCategory. allocated),
       spent: 0,
       icon: newCategory.icon
     };
     setBudgetData(prev => ({
-      ...prev,
-      expenseCategories: [...(prev.expenseCategories || []), newCat]
+      ... prev,
+      expenseCategories: [... (prev.expenseCategories || []), newCat]
     }));
     setNewCategory({ name: "", allocated: "", icon: "📦" });
     setShowAddModal(false);
@@ -638,21 +634,31 @@ export default function BudgetPage() {
   const handleDeleteCategory = useCallback((categoryId) => {
     setBudgetData(prev => ({
       ...prev,
-      expenseCategories: prev.expenseCategories.filter(cat => cat.id !== categoryId)
+      expenseCategories: prev.expenseCategories.filter(cat => cat. id !== categoryId)
     }));
   }, []);
 
-  const handleAllocate = useCallback((amount, type) => {
+  const handleAllocate = useCallback(async (amount, type) => {
     if (type === 'savings') {
-      setBudgetData(prev => ({
-        ...prev,
-        savings: {
-          ...prev.savings,
-          contributed: (prev.savings?.contributed || 0) + amount,
-          available: (prev.savings?.available || 0) + amount
-        }
-      }));
+      try {
+        // Use the goals API to add savings
+        await goalsApi.addSavings(amount);
+        // Refresh data after adding
+        await fetchBudgetData();
+      } catch (err) {
+        console.error('Error adding to savings:', err);
+        // Update local state as fallback
+        setBudgetData(prev => ({
+          ...prev,
+          savings: {
+            ... prev.savings,
+            contributed: (prev.savings?.contributed || 0) + amount,
+            available: (prev.savings?.available || 0) + amount
+          }
+        }));
+      }
     } else {
+      // Emergency fund - update locally (no backend endpoint)
       setBudgetData(prev => ({
         ...prev,
         emergency: {
@@ -662,25 +668,26 @@ export default function BudgetPage() {
         }
       }));
     }
-  }, []);
+    setShowAllocateModal(false);
+  }, [fetchBudgetData]);
 
   const handleDismissAlert = useCallback((alertId) => {
     setAlerts(prev => prev.filter(a => a.id !== alertId));
   }, []);
 
   const handleExportData = useCallback(() => {
-    if (!budgetData?.expenseCategories) return;
+    if (!budgetData?. expenseCategories) return;
     const headers = ["Category", "Allocated", "Spent", "Remaining", "Status"];
     const rows = budgetData.expenseCategories.map(cat => {
-      const remaining = cat.allocated - cat.spent;
-      return [cat.name, cat.allocated, cat.spent, remaining, remaining >= 0 ? "Under Budget" : "Over Budget"];
+      const remaining = cat.allocated - cat. spent;
+      return [cat.name, cat. allocated, cat.spent, remaining, remaining >= 0 ? "Under Budget" : "Over Budget"];
     });
     const csvContent = [headers.join(","), ...rows.map(row => row.join(","))].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
+    const url = URL. createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `budget-${MONTHS[selectedMonth]}-${selectedYear}.csv`;
+    a.download = `budget-${MONTHS[selectedMonth]}-${selectedYear}. csv`;
     a.click();
     URL.revokeObjectURL(url);
   }, [budgetData, selectedMonth, selectedYear]);
@@ -697,11 +704,11 @@ export default function BudgetPage() {
 
   const totals = calculateTotals();
   const hasOverages = budgetData?.expenseCategories?.some(c => c.spent > c.allocated) || false;
-  const savingsPercentage = budgetData?.savings?.allocated > 0 
+  const savingsPercentage = budgetData?.savings?. allocated > 0 
     ? (budgetData.savings.contributed / budgetData.savings.allocated) * 100 
     : 0;
   const emergencyPercentage = budgetData?.emergency?.target > 0 
-    ? (budgetData.emergency.current / budgetData.emergency.target) * 100 
+    ? (budgetData.emergency.current / budgetData. emergency.target) * 100 
     : 0;
 
   // ========== Render ==========
@@ -749,7 +756,7 @@ export default function BudgetPage() {
             animate={{ opacity: 1, y: 0 }}
           >
             <SavingsCard
-              savings={budgetData?.savings}
+              savings={budgetData?. savings}
               savingsPercentage={savingsPercentage}
               onAddClick={() => openAllocateModal('savings')}
             />
@@ -762,7 +769,7 @@ export default function BudgetPage() {
 
           {/* Expense Categories Table */}
           <ExpenseCategoriesTable
-            categories={budgetData?.expenseCategories || []}
+            categories={budgetData?. expenseCategories || []}
             totals={totals}
             editingCategory={editingCategory}
             setEditingCategory={setEditingCategory}
