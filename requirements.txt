@@ -1,35 +1,22 @@
-# FastAPI & Server
+# Core API
 fastapi
 uvicorn[standard]
-
-# Database - SQLModel with Async PostgreSQL
-sqlmodel
-asyncpg
-sqlalchemy[asyncio]
-
-# Configuration & Environment
 pydantic-settings
+python-multipart
 python-dotenv
 
-# Authentication & Security
+# Database (Async)
+sqlmodel
+asyncpg
+
+# Security & Auth
 python-jose[cryptography]
 passlib[bcrypt]
 
-# File Upload & Form Handling
-python-multipart
-
-# Google Gemini AI (for Agent)
+# AI & Agents
 google-generativeai
 
 # Data Processing & Parsing
 pandas
-
-# OCR for Receipt Scanning
+pillow
 pytesseract
-Pillow
-
-# HTTP Client (if needed for external APIs)
-httpx
-aiohttp
-
-passlib
