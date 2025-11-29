@@ -20,3 +20,6 @@ google-generativeai
 pandas
 pillow
 pytesseract
+
+passlib[bcrypt]
+bcrypt==3.2.2
