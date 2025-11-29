@@ -5,6 +5,9 @@
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0+-06B6D4?logo=tailwindcss&logoColor=white)
 
 **FinBuddy Frontend** is the responsive, interactive web interface for the FinBuddy AI financial assistant. Built with **React 19** and **Vite**, it features a sleek, dark-mode UI powered by Tailwind CSS, real-time data visualization with Recharts, and smooth animations using Framer Motion.
+Deployed Links are - 
+Frontend - "[Link](https://finbuddy-iota.vercel.app/)"
+Backend - "[Link](https://mumbaihacks-25.onrender.com)"
 
 ---
 
@@ -69,6 +72,7 @@ npm run dev
 The application will start at http://localhost:5173.
 
 📂 Project Structure
+```
 src/
 ├── assets/             # Images and static assets
 ├── components/         # Reusable UI components
@@ -82,7 +86,7 @@ src/
 ├── services/           # API integration (Axios instances)
 ├── App.jsx             # Main Router Setup
 └── main.jsx            # Entry point
-
+```
 🎨 UI Customization
 This project uses Tailwind CSS v4. Global styles and theme configurations can be found in src/index.css.
 
