@@ -54,7 +54,6 @@ const CircularProgress = ({ percentage, size = 140, strokeWidth = 12, color = "t
   const [animatedPercentage, setAnimatedPercentage] = useState(0);
 
   useEffect(() => {
-    // Animate to the new percentage
     const timer = setTimeout(() => setAnimatedPercentage(Math.min(Math.max(percentage, 0), 100)), 100);
     return () => clearTimeout(timer);
   }, [percentage]);
@@ -95,18 +94,16 @@ const CircularProgress = ({ percentage, size = 140, strokeWidth = 12, color = "t
 };
 
 const GoalCard = ({ goal, onDelete, onEdit, onFund, availableSavings, isLoading }) => {
-  const { id, title, current, total, priority, monthly_contribution, estimated_completion, icon, progress, remaining, is_completed } = goal;
+  const { id, title, current, total, priority, monthly_contribution, estimated_completion, icon, is_completed } = goal;
   const [menuOpen, setMenuOpen] = useState(false);
   const [showFundModal, setShowFundModal] = useState(false);
   const [fundAmount, setFundAmount] = useState('');
   const [funding, setFunding] = useState(false);
 
-  // Robust number conversion
   const currentVal = Number(current) || 0;
   const totalVal = Number(total) || 1;
-  const remainingVal = Number(remaining) || 0;
+  const remainingVal = Math.max(totalVal - currentVal, 0);
   
-  // Calculate progress locally to ensure instant UI updates
   const calculatedProgress = (currentVal / totalVal) * 100;
   const displayProgress = Math.min(Math.max(calculatedProgress, 0), 100);
 
@@ -129,7 +126,7 @@ const GoalCard = ({ goal, onDelete, onEdit, onFund, availableSavings, isLoading 
 
   return (
     <>
-      <motion.div 
+      <motion. div 
         className={`bg-gray-800/50 border ${is_completed ? 'border-green-700/50' : 'border-gray-700/50'} p-5 rounded-xl relative overflow-hidden`}
         variants={itemVariants}
         layout
@@ -153,7 +150,7 @@ const GoalCard = ({ goal, onDelete, onEdit, onFund, availableSavings, isLoading 
                 </span>
               </div>
               <p className="text-sm text-gray-400 mt-1">
-                ${currentVal.toLocaleString()} of ${totalVal.toLocaleString()}
+                ${currentVal. toLocaleString()} of ${totalVal.toLocaleString()}
               </p>
             </div>
           </div>
@@ -184,7 +181,7 @@ const GoalCard = ({ goal, onDelete, onEdit, onFund, availableSavings, isLoading 
                   >
                     <FiTrash2 size={14} /> Delete
                   </button>
-                </motion.div>
+                </motion. div>
               )}
             </AnimatePresence>
           </div>
@@ -194,11 +191,11 @@ const GoalCard = ({ goal, onDelete, onEdit, onFund, availableSavings, isLoading 
           <div>
             <div className="flex justify-between text-sm mb-1">
               <span className="text-gray-400">Progress</span>
-              <span className="text-gray-300">{displayProgress.toFixed(1)}%</span>
+              <span className="text-gray-300">{displayProgress. toFixed(1)}%</span>
             </div>
-            <div className="w-full bg-gray-700 rounded-full h-2.5 overflow-hidden">
+            <div className="w-full bg-gray-700 rounded-full h-2. 5 overflow-hidden">
               <motion.div 
-                className={`h-2.5 rounded-full ${
+                className={`h-2. 5 rounded-full ${
                   is_completed ? 'bg-green-500' : displayProgress >= 75 ? 'bg-green-500' : displayProgress >= 50 ? 'bg-blue-500' : 'bg-yellow-500'
                 }`}
                 initial={{ width: 0 }}
@@ -211,7 +208,7 @@ const GoalCard = ({ goal, onDelete, onEdit, onFund, availableSavings, isLoading 
           <div className="flex justify-between items-center text-sm">
             <div className="text-gray-400">
               {is_completed ? (
-                <span className="text-green-400">Goal achieved! 🎉</span>
+                <span className="text-green-400">Goal achieved!  🎉</span>
               ) : (
                 <>
                   <span className="text-gray-300">${remainingVal.toLocaleString()}</span> remaining
@@ -219,7 +216,7 @@ const GoalCard = ({ goal, onDelete, onEdit, onFund, availableSavings, isLoading 
               )}
             </div>
             <div className="text-gray-400">
-              Est. <span className="text-gray-300">{estimated_completion}</span>
+              Est. <span className="text-gray-300">{estimated_completion || 'N/A'}</span>
             </div>
           </div>
 
@@ -227,10 +224,10 @@ const GoalCard = ({ goal, onDelete, onEdit, onFund, availableSavings, isLoading 
             <div className="text-xs text-gray-500">
               Monthly: <span className="text-gray-300">${monthly_contribution}/mo</span>
             </div>
-            {!is_completed && (
+            {! is_completed && (
               <button 
                 onClick={() => setShowFundModal(true)}
-                className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-1. 5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={availableSavings <= 0 || isLoading}
               >
                 <FiPlus size={14} /> Fund
@@ -264,7 +261,7 @@ const GoalCard = ({ goal, onDelete, onEdit, onFund, availableSavings, isLoading 
               </button>
               <h2 className="text-xl font-bold text-white mb-2">Fund {title}</h2>
               <p className="text-sm text-gray-400 mb-4">
-                Available from savings: <span className="text-green-400">${availableSavings?.toLocaleString()}</span>
+                Available from savings: <span className="text-green-400">${availableSavings?. toLocaleString()}</span>
               </p>
               <p className="text-sm text-gray-400 mb-4">
                 Remaining for goal: <span className="text-yellow-400">${remainingVal.toLocaleString()}</span>
@@ -274,7 +271,7 @@ const GoalCard = ({ goal, onDelete, onEdit, onFund, availableSavings, isLoading 
                 <input 
                   type="number" 
                   value={fundAmount} 
-                  onChange={(e) => setFundAmount(e.target.value)}
+                  onChange={(e) => setFundAmount(e. target.value)}
                   max={Math.min(availableSavings, remainingVal)}
                   className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter amount"
@@ -286,7 +283,7 @@ const GoalCard = ({ goal, onDelete, onEdit, onFund, availableSavings, isLoading 
               </div>
               <div className="flex gap-2 mb-4">
                 <button 
-                  onClick={() => setFundAmount(Math.min(100, availableSavings, remainingVal).toString())}
+                  onClick={() => setFundAmount(Math.min(100, availableSavings, remainingVal). toString())}
                   className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm rounded-lg"
                   disabled={funding}
                 >
@@ -318,7 +315,7 @@ const GoalCard = ({ goal, onDelete, onEdit, onFund, availableSavings, isLoading 
                 <button 
                   onClick={handleFund}
                   className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                  disabled={!fundAmount || parseFloat(fundAmount) <= 0 || parseFloat(fundAmount) > availableSavings || funding}
+                  disabled={! fundAmount || parseFloat(fundAmount) <= 0 || parseFloat(fundAmount) > availableSavings || funding}
                 >
                   {funding ? (
                     <>
@@ -355,8 +352,8 @@ const GoalModal = ({ isOpen, onClose, onSave, editingGoal = null, isLoading }) =
   useEffect(() => {
     if (editingGoal) {
       setFormData({
-        title: editingGoal.title,
-        total: editingGoal.total.toString(),
+        title: editingGoal. title,
+        total: editingGoal.total. toString(),
         monthly_contribution: editingGoal.monthly_contribution.toString(),
         priority: editingGoal.priority,
         icon: editingGoal.icon,
@@ -372,11 +369,11 @@ const GoalModal = ({ isOpen, onClose, onSave, editingGoal = null, isLoading }) =
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.title && parseFloat(formData.total) > 0) {
+    if (formData.title && parseFloat(formData. total) > 0) {
       setSaving(true);
       const goalData = {
-        title: formData.title,
-        total: parseFloat(formData.total),
+        title: formData. title,
+        total: parseFloat(formData. total),
         monthly_contribution: parseFloat(formData.monthly_contribution) || 100,
         priority: formData.priority,
         icon: formData.icon,
@@ -413,7 +410,7 @@ const GoalModal = ({ isOpen, onClose, onSave, editingGoal = null, isLoading }) =
             <input 
               type="text" 
               value={formData.title} 
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, title: e. target.value })}
               className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white focus:ring-blue-500 focus:border-blue-500"
               placeholder="e.g., New Car"
               required
@@ -452,7 +449,7 @@ const GoalModal = ({ isOpen, onClose, onSave, editingGoal = null, isLoading }) =
           <div>
             <label className="block text-sm text-gray-300 mb-2">Priority</label>
             <div className="flex gap-2">
-              {['low', 'medium', 'high'].map((p) => (
+              {['low', 'medium', 'high']. map((p) => (
                 <button
                   key={p}
                   type="button"
@@ -460,7 +457,7 @@ const GoalModal = ({ isOpen, onClose, onSave, editingGoal = null, isLoading }) =
                   disabled={saving}
                   className={`flex-1 py-2 rounded-lg text-sm capitalize transition ${
                     formData.priority === p 
-                      ? p === 'high' ? 'bg-red-600 text-white' 
+                      ?  p === 'high' ?  'bg-red-600 text-white' 
                         : p === 'medium' ? 'bg-yellow-600 text-white' 
                         : 'bg-green-600 text-white'
                       : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
@@ -482,7 +479,7 @@ const GoalModal = ({ isOpen, onClose, onSave, editingGoal = null, isLoading }) =
                   onClick={() => setFormData({ ...formData, icon })}
                   disabled={saving}
                   className={`p-2 text-xl rounded-lg transition ${
-                    formData.icon === icon ? 'bg-blue-600 ring-2 ring-blue-400' : 'bg-gray-700 hover:bg-gray-600'
+                    formData.icon === icon ?  'bg-blue-600 ring-2 ring-blue-400' : 'bg-gray-700 hover:bg-gray-600'
                   }`}
                 >
                   {icon}
@@ -498,26 +495,25 @@ const GoalModal = ({ isOpen, onClose, onSave, editingGoal = null, isLoading }) =
           >
             {saving ? (
               <>
-                <motion.div
+                <motion. div
                   className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
                   animate={{ rotate: 360 }}
                   transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                 />
-                {editingGoal ? 'Saving...' : 'Creating...'}
+                {editingGoal ?  'Saving...' : 'Creating... '}
               </>
             ) : (
               editingGoal ? 'Save Changes' : 'Add Goal'
             )}
           </button>
         </form>
-      </motion.div>
+      </motion. div>
     </motion.div>
   );
 };
 
 const AddSavingsModal = ({ isOpen, onClose, onAddSavings }) => {
   const [amount, setAmount] = useState('');
-  const [note, setNote] = useState('');
   const [saving, setSaving] = useState(false);
 
   if (!isOpen) return null;
@@ -527,10 +523,9 @@ const AddSavingsModal = ({ isOpen, onClose, onAddSavings }) => {
     const parsedAmount = parseFloat(amount);
     if (parsedAmount > 0) {
       setSaving(true);
-      await onAddSavings(parsedAmount, note);
+      await onAddSavings(parsedAmount);
       setSaving(false);
       setAmount('');
-      setNote('');
       onClose();
     }
   };
@@ -544,7 +539,7 @@ const AddSavingsModal = ({ isOpen, onClose, onAddSavings }) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      <motion.div 
+      <motion. div 
         className="bg-gray-800 p-6 rounded-xl w-full max-w-md relative mx-4"
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -572,9 +567,9 @@ const AddSavingsModal = ({ isOpen, onClose, onAddSavings }) => {
               value={amount} 
               onChange={(e) => setAmount(e.target.value)}
               className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white text-lg focus:ring-green-500 focus:border-green-500"
-              placeholder="0.00"
+              placeholder="0. 00"
               required
-              min="0.01"
+              min="0. 01"
               step="0.01"
               disabled={saving}
             />
@@ -585,7 +580,7 @@ const AddSavingsModal = ({ isOpen, onClose, onAddSavings }) => {
               <button
                 key={amt}
                 type="button"
-                onClick={() => setAmount(amt.toString())}
+                onClick={() => setAmount(amt. toString())}
                 disabled={saving}
                 className={`px-4 py-2 rounded-lg text-sm transition ${
                   amount === amt.toString() 
@@ -596,18 +591,6 @@ const AddSavingsModal = ({ isOpen, onClose, onAddSavings }) => {
                 ${amt}
               </button>
             ))}
-          </div>
-
-          <div>
-            <label className="block text-sm text-gray-300 mb-2">Note (optional)</label>
-            <input 
-              type="text" 
-              value={note} 
-              onChange={(e) => setNote(e.target.value)}
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white focus:ring-green-500 focus:border-green-500"
-              placeholder="e.g., Birthday gift, Bonus, Side hustle..."
-              disabled={saving}
-            />
           </div>
 
           <div className="bg-gray-700/50 p-4 rounded-lg">
@@ -627,7 +610,7 @@ const AddSavingsModal = ({ isOpen, onClose, onAddSavings }) => {
             </button>
             <button 
               type="submit"
-              disabled={!amount || parseFloat(amount) <= 0 || saving}
+              disabled={! amount || parseFloat(amount) <= 0 || saving}
               className="flex-1 px-4 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {saving ? (
@@ -656,8 +639,6 @@ const Goals = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddSavingsModalOpen, setIsAddSavingsModalOpen] = useState(false);
   const [editingGoal, setEditingGoal] = useState(null);
-  const [recentTransactions, setRecentTransactions] = useState([]);
-  const [smartSuggestion, setSmartSuggestion] = useState(null);
   const [filterPriority, setFilterPriority] = useState('all');
   
   // Loading states
@@ -689,27 +670,52 @@ const Goals = () => {
     setToast({ message, type });
   };
 
+  // Generate smart suggestion based on goals data
+  const getSmartSuggestion = useCallback(() => {
+    if (goals.length === 0) {
+      return 'Start your savings journey by adding your first financial goal!';
+    }
+    
+    const highPriorityGoals = goals.filter(g => g.priority === 'high' && ! g.is_completed);
+    const lowProgressGoals = goals. filter(g => {
+      const progress = (g. current / g.total) * 100;
+      return progress < 25 && !g.is_completed;
+    });
+    
+    if (highPriorityGoals.length > 0) {
+      return `Focus on your high-priority goal "${highPriorityGoals[0]. title}" - consider increasing your monthly contribution to reach it faster. `;
+    }
+    
+    if (lowProgressGoals. length > 0) {
+      return `Your goal "${lowProgressGoals[0].title}" needs attention.  Try adding some extra savings this month! `;
+    }
+    
+    if (financialData.savings.available > 500) {
+      return `You have $${financialData. savings.available.toLocaleString()} available.  Consider funding your goals to make progress! `;
+    }
+    
+    return 'Great job managing your goals! Keep up the consistent savings habit.';
+  }, [goals, financialData. savings. available]);
+
   // Fetch all data
   const fetchAllData = useCallback(async (showRefresh = false) => {
     try {
       if (showRefresh) setRefreshing(true);
       else setLoading(true);
 
-      // Fetch all data in parallel
-      const [goalsRes, savingsRes, transactionsRes, suggestionRes] = await Promise.all([
+      // Fetch goals and savings info in parallel
+      const [goalsRes, savingsRes] = await Promise.all([
         goalsApi.getAllGoals(),
         goalsApi.getSavingsInfo(),
-        goalsApi.getRecentTransactions(5),
-        goalsApi.getSmartSuggestion(),
       ]);
 
       // Update goals
       setGoals(goalsRes || []);
 
-      // Update financial data
+      // Update financial data from savings info
       if (savingsRes) {
         setFinancialData({
-          totalFunds: Number(savingsRes.total_funds) || 0,
+          totalFunds: Number(savingsRes. total_funds) || 0,
           savings: {
             allocated: Number(savingsRes.savings_allocated) || 0,
             available: Number(savingsRes.savings_available) || 0,
@@ -719,21 +725,15 @@ const Goals = () => {
           totalGoalsAmount: Number(savingsRes.total_goals_amount) || 0,
           totalFunded: Number(savingsRes.total_funded) || 0,
           overallProgress: Number(savingsRes.overall_progress) || 0,
-          completedGoals: Number(savingsRes.completed_goals) || 0,
-          totalGoals: Number(savingsRes.total_goals) || 0,
+          completedGoals: Number(savingsRes. completed_goals) || 0,
+          totalGoals: Number(savingsRes. total_goals) || 0,
           monthlyContributions: Number(savingsRes.monthly_contributions) || 0,
         });
       }
 
-      // Update transactions
-      setRecentTransactions(transactionsRes || []);
-
-      // Update smart suggestion
-      setSmartSuggestion(suggestionRes);
-
     } catch (error) {
       console.error('Error fetching data:', error);
-      showToast('Failed to load data. Please try again.', 'error');
+      showToast('Failed to load data.  Please try again.', 'error');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -754,7 +754,7 @@ const Goals = () => {
   const handleSaveGoal = async (goalData, goalId = null) => {
     try {
       if (goalId) {
-        // Update existing goal
+        // Update existing goal (Note: backend doesn't support this yet)
         await goalsApi.updateGoal(goalId, goalData);
         showToast('Goal updated successfully!');
       } else {
@@ -766,19 +766,19 @@ const Goals = () => {
       await fetchAllData(true);
     } catch (error) {
       console.error('Error saving goal:', error);
-      showToast('Failed to save goal. Please try again.', 'error');
+      showToast('Failed to save goal. Please try again. ', 'error');
     }
   };
 
   // Delete Goal
   const handleDeleteGoal = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this goal? Any funded amount will be refunded to your savings.')) {
+    if (! window.confirm('Are you sure you want to delete this goal?  Any funded amount will be refunded to your savings. ')) {
       return;
     }
     
     try {
       const result = await goalsApi.deleteGoal(id);
-      showToast(`Goal deleted! ${result.refunded_amount > 0 ? `$${result.refunded_amount.toLocaleString()} refunded.` : ''}`);
+      showToast(`Goal deleted!  ${result.refunded_amount > 0 ? `$${result.refunded_amount.toLocaleString()} refunded. ` : ''}`);
       await fetchAllData(true);
     } catch (error) {
       console.error('Error deleting goal:', error);
@@ -806,11 +806,11 @@ const Goals = () => {
     }
   };
 
-  // Add Savings
-  const handleAddSavings = async (amount, note) => {
+  // Add Savings - Updated to match backend (no note parameter)
+  const handleAddSavings = async (amount) => {
     try {
-      await goalsApi.addSavings(amount, note);
-      showToast(`Successfully added $${amount.toLocaleString()} to savings!`);
+      await goalsApi.addSavings(amount);
+      showToast(`Successfully added $${amount. toLocaleString()} to savings!`);
       await fetchAllData(true);
     } catch (error) {
       console.error('Error adding savings:', error);
@@ -824,9 +824,7 @@ const Goals = () => {
     : goals.filter(g => g.priority === filterPriority);
 
   // Calculate Savings Pool Percentage
-  // Logic: Available / (Available + Funded)
-  // This represents "How much of my total savings capacity is still available?"
-  const totalSavingsPool = financialData.savings.available + financialData.totalFunded;
+  const totalSavingsPool = financialData.savings. available + financialData.totalFunded;
   const savingsPoolPercentage = totalSavingsPool > 0 
     ? (financialData.savings.available / totalSavingsPool) * 100 
     : 0;
@@ -858,13 +856,13 @@ const Goals = () => {
             <motion.button 
               onClick={handleRefresh}
               disabled={refreshing}
-              className="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2.5 px-4 rounded-lg flex items-center gap-2 transition disabled:opacity-50"
+              className="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2. 5 px-4 rounded-lg flex items-center gap-2 transition disabled:opacity-50"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
               <FiRefreshCw size={18} className={refreshing ? 'animate-spin' : ''} />
             </motion.button>
-            <motion.button 
+            <motion. button 
               onClick={() => setIsAddSavingsModalOpen(true)}
               className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-5 rounded-lg flex items-center gap-2 transition"
               whileHover={{ scale: 1.02 }}
@@ -907,7 +905,7 @@ const Goals = () => {
               </div>
               <span className="text-gray-400 text-sm">Available Savings</span>
             </div>
-            <p className="text-2xl font-bold text-white">${financialData.savings.available.toLocaleString()}</p>
+            <p className="text-2xl font-bold text-white">${financialData.savings.available. toLocaleString()}</p>
             <p className="text-xs text-gray-500 mt-1">Ready to allocate to goals</p>
           </div>
 
@@ -918,8 +916,8 @@ const Goals = () => {
               </div>
               <span className="text-gray-400 text-sm">Goals Progress</span>
             </div>
-            <p className="text-2xl font-bold text-white">{financialData.overallProgress.toFixed(1)}%</p>
-            <p className="text-xs text-gray-500 mt-1">{financialData.completedGoals}/{financialData.totalGoals} goals completed</p>
+            <p className="text-2xl font-bold text-white">{financialData. overallProgress. toFixed(1)}%</p>
+            <p className="text-xs text-gray-500 mt-1">{financialData. completedGoals}/{financialData.totalGoals} goals completed</p>
           </div>
 
           <div className="bg-gray-800/50 border border-gray-700/50 p-5 rounded-xl">
@@ -929,13 +927,13 @@ const Goals = () => {
               </div>
               <span className="text-gray-400 text-sm">Monthly Contributions</span>
             </div>
-            <p className="text-2xl font-bold text-white">${financialData.monthlyContributions.toLocaleString()}</p>
+            <p className="text-2xl font-bold text-white">${financialData. monthlyContributions.toLocaleString()}</p>
             <p className="text-xs text-gray-500 mt-1">Towards all goals</p>
           </div>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Savings Pool & Recent Activity */}
+          {/* Left Column - Savings Pool & Smart Tip */}
           <div className="lg:col-span-1 space-y-6">
             {/* Savings Pool */}
             <motion.div 
@@ -949,7 +947,7 @@ const Goals = () => {
                 </h2>
                 <button 
                   onClick={() => setIsAddSavingsModalOpen(true)}
-                  className="text-xs px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg transition flex items-center gap-1"
+                  className="text-xs px-3 py-1. 5 bg-green-600 hover:bg-green-700 text-white rounded-lg transition flex items-center gap-1"
                 >
                   <FiPlus size={12} /> Add
                 </button>
@@ -980,35 +978,7 @@ const Goals = () => {
               </div>
             </motion.div>
 
-            {/* Recent Activity */}
-            {recentTransactions.length > 0 && (
-              <motion.div 
-                className="bg-gray-800/50 border border-gray-700/50 p-6 rounded-xl"
-                variants={itemVariants}
-              >
-                <h2 className="text-lg font-bold text-white mb-4">Recent Activity</h2>
-                <div className="space-y-3">
-                  {recentTransactions.map((tx) => (
-                    <div key={tx.id} className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-2 h-2 rounded-full ${
-                          tx.type === 'deposit' ? 'bg-green-400' : 
-                          tx.type === 'refund' ? 'bg-yellow-400' : 'bg-blue-400'
-                        }`} />
-                        <span className="text-gray-300 truncate max-w-[150px]">{tx.description}</span>
-                      </div>
-                      <span className={`font-medium ${
-                        tx.type === 'fund' ? 'text-red-400' : 'text-green-400'
-                      }`}>
-                        {tx.type === 'fund' ? '-' : '+'}${tx.amount?.toLocaleString()}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-
-            {/* Smart Tip */}
+            {/* Smart Tip - Generated from goals data */}
             <motion.div 
               className="bg-blue-900/20 border border-blue-800/50 p-5 rounded-xl flex gap-4"
               variants={itemVariants}
@@ -1017,19 +987,10 @@ const Goals = () => {
               <div>
                 <h3 className="font-bold text-white mb-1">Smart Suggestion</h3>
                 <p className="text-sm text-gray-300">
-                  {smartSuggestion?.suggestion || 'Start your savings journey by adding your first financial goal!'}
+                  {getSmartSuggestion()}
                 </p>
-                {smartSuggestion?.recommendations?.length > 0 && (
-                  <ul className="mt-2 space-y-1">
-                    {smartSuggestion.recommendations.slice(0, 2).map((rec, idx) => (
-                      <li key={idx} className="text-xs text-gray-400 flex items-center gap-1">
-                        <span className="text-blue-400">•</span> {rec}
-                      </li>
-                    ))}
-                  </ul>
-                )}
               </div>
-            </motion.div>
+            </motion. div>
           </div>
 
           {/* Right Column - Goals */}
@@ -1038,7 +999,7 @@ const Goals = () => {
               <h2 className="text-xl font-bold text-white">My Goals ({goals.length})</h2>
               <div className="flex gap-2">
                 <select 
-                  className="bg-gray-800 border border-gray-700 text-gray-300 text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:border-gray-600"
+                  className="bg-gray-800 border border-gray-700 text-gray-300 text-sm rounded-lg px-3 py-1. 5 focus:outline-none focus:border-gray-600"
                   value={filterPriority}
                   onChange={(e) => setFilterPriority(e.target.value)}
                 >
@@ -1070,14 +1031,14 @@ const Goals = () => {
               </AnimatePresence>
             </motion.div>
 
-            {filteredGoals.length === 0 && !loading && (
+            {filteredGoals.length === 0 && ! loading && (
               <motion.div 
                 className="bg-gray-800/50 border border-gray-700/50 border-dashed p-12 rounded-xl text-center"
                 variants={itemVariants}
               >
                 <FiTarget size={48} className="text-gray-600 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-400 mb-2">
-                  {filterPriority === 'all' ? 'No goals yet' : `No ${filterPriority} priority goals`}
+                  {filterPriority === 'all' ?  'No goals yet' : `No ${filterPriority} priority goals`}
                 </h3>
                 <p className="text-gray-500 mb-4">
                   {filterPriority === 'all' 

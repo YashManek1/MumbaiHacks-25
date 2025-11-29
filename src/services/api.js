@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // 1. Setup Base URL
 // Make sure this exists in your .env: VITE_BACKEND_URL="http://127.0.0.1:8000"
-const RAW_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+const RAW_BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 // Remove any trailing slash and append /api/v1
 const API_BASE_URL = `${RAW_BASE_URL.replace(/\/$/, '')}/api/v1`;
