@@ -1,11 +1,11 @@
 import axios from 'axios';
 
 // 1. Setup Base URL
-// Make sure this exists in your . env: VITE_BACKEND_URL="http://127.0.0. 1:8000"
+// Make sure this exists in your .env: VITE_BACKEND_URL="http://127.0.0.1:8000"
 const RAW_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
 
 // Remove any trailing slash and append /api/v1
-const API_BASE_URL = `${RAW_BASE_URL. replace(/\/$/, '')}/api/v1`;
+const API_BASE_URL = `${RAW_BASE_URL.replace(/\/$/, '')}/api/v1`;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -25,7 +25,7 @@ api.interceptors.request.use(
     }
 
     if (token) {
-      if (! config.headers) {
+      if (!config.headers) {
         config.headers = {};
       }
       config.headers.Authorization = `Bearer ${token}`;
@@ -39,11 +39,11 @@ api.interceptors.request.use(
 // ============================================================
 // 3. RESPONSE INTERCEPTOR (Handle 401 / Expired Token)
 // ============================================================
-api. interceptors.response. use(
+api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error. response && error.response.status === 401) {
-      console.warn('Session expired or unauthorized.  Redirecting to login.. .');
+    if (error.response && error.response.status === 401) {
+      console.warn('Session expired or unauthorized. Redirecting to login...');
     }
     return Promise.reject(error);
   }
@@ -58,7 +58,7 @@ export const goalsApi = {
       const response = await api.get('/goals/');
       return response.data;
     } catch (error) {
-      console. error('Error fetching goals:', error?. response?.data || error. message);
+      console.error('Error fetching goals:', error?.response?.data || error.message);
       throw error;
     }
   },
@@ -80,16 +80,16 @@ export const goalsApi = {
     } catch (error) {
       if (error.response && (error.response.status === 404 || error.response.status === 405)) {
         console.warn('Update endpoint missing, simulating success.');
-        return { ... goalData, id };
+        return { ...goalData, id };
       }
-      console.error('Error updating goal:', error?.response?.data || error. message);
+      console.error('Error updating goal:', error?.response?.data || error.message);
       throw error;
     }
   },
 
   deleteGoal: async (id) => {
     try {
-      const response = await api. delete(`/goals/${id}`);
+      const response = await api.delete(`/goals/${id}`);
       return response.data;
     } catch (error) {
       console.error('Error deleting goal:', error?.response?.data || error.message);
@@ -99,10 +99,10 @@ export const goalsApi = {
 
   fundGoal: async (id, amount) => {
     try {
-      const response = await api. post(`/goals/${id}/fund`, { amount });
+      const response = await api.post(`/goals/${id}/fund`, { amount });
       return response.data;
     } catch (error) {
-      console.error('Error funding goal:', error?. response?.data || error.message);
+      console.error('Error funding goal:', error?.response?.data || error.message);
       throw error;
     }
   },
@@ -112,17 +112,17 @@ export const goalsApi = {
       const response = await api.get('/goals/savings/info');
       return response.data;
     } catch (error) {
-      console. error('Error getting savings info:', error?. response?.data || error.message);
+      console.error('Error getting savings info:', error?.response?.data || error.message);
       throw error;
     }
   },
 
   addSavings: async (amount, note) => {
     try {
-      const response = await api. post('/goals/savings/add', { amount, note });
+      const response = await api.post('/goals/savings/add', { amount, note });
       return response.data;
     } catch (error) {
-      console.error('Error adding savings:', error?.response?.data || error. message);
+      console.error('Error adding savings:', error?.response?.data || error.message);
       throw error;
     }
   },
@@ -138,7 +138,7 @@ export const budgetApi = {
       const response = await api.get('/analysis/dashboard');
       return response.data;
     } catch (error) {
-      console.error('Error fetching dashboard data:', error?.response?. data || error.message);
+      console.error('Error fetching dashboard data:', error?.response?.data || error.message);
       throw error;
     }
   },
@@ -182,7 +182,7 @@ export const budgetApi = {
       const response = await api.post('/agent/budget/generate', params);
       return response.data;
     } catch (error) {
-      console. error('Error generating budget:', error?.response?. data || error.message);
+      console.error('Error generating budget:', error?.response?.data || error.message);
       throw error;
     }
   },

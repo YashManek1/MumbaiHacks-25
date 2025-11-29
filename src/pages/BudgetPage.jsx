@@ -60,8 +60,8 @@ const getCategoryIcon = (categoryName) => {
   }
   // Try case-insensitive match
   const lowerName = categoryName.toLowerCase();
-  for (const [key, value] of Object. entries(CATEGORY_ICONS)) {
-    if (key.toLowerCase() === lowerName || lowerName.includes(key. toLowerCase())) {
+  for (const [key, value] of Object.entries(CATEGORY_ICONS)) {
+    if (key.toLowerCase() === lowerName || lowerName.includes(key.toLowerCase())) {
       return value;
     }
   }
@@ -114,16 +114,16 @@ export default function BudgetPage() {
     const overages = [];
     const underages = [];
     
-    if (! data?. expenseCategories) return { overages, underages };
+    if (!data?.expenseCategories) return { overages, underages };
     
-    data. expenseCategories. forEach(cat => {
+    data.expenseCategories.forEach(cat => {
       if (cat.allocated === 0) return;
       const diff = cat.spent - cat.allocated;
       const percentage = (cat.spent / cat.allocated) * 100;
       if (diff > 0) {
-        overages.push({ ... cat, overage: diff, percentage: percentage.toFixed(1) });
+        overages.push({ ...cat, overage: diff, percentage: percentage.toFixed(1) });
       } else if (percentage < 70) {
-        underages.push({ ... cat, underage: Math.abs(diff), percentage: percentage.toFixed(1) });
+        underages.push({ ...cat, underage: Math.abs(diff), percentage: percentage.toFixed(1) });
       }
     });
     return { overages, underages };
@@ -131,13 +131,13 @@ export default function BudgetPage() {
 
   const generateAdjustmentSuggestions = useCallback((overages, underages) => {
     return overages.map(overage => {
-      const possibleSources = underages.filter(u => u. underage >= overage.overage * 0.3);
+      const possibleSources = underages.filter(u => u.underage >= overage.overage * 0.3);
       return {
         id: `adj-${overage.id}`,
         categoryId: overage.id,
-        categoryName: overage. name,
-        categoryIcon: overage. icon,
-        overage: overage. overage,
+        categoryName: overage.name,
+        categoryIcon: overage.icon,
+        overage: overage.overage,
         currentAllocated: overage.allocated,
         suggestedAllocated: overage.allocated + overage.overage,
         compensationSources: possibleSources.map(s => ({
@@ -147,7 +147,7 @@ export default function BudgetPage() {
           suggested: Math.min(s.underage, overage.overage / possibleSources.length)
         })),
         options: [
-          { type: "keep_same", label: "Keep budget same", description: `Maintain ₹${overage.allocated. toLocaleString()} for ${overage.name}. ` },
+          { type: "keep_same", label: "Keep budget same", description: `Maintain ₹${overage.allocated.toLocaleString()} for ${overage.name}. ` },
           { type: "adjust_increase", label: "Increase budget", description: `Increase to ₹${(overage.allocated + overage.overage).toLocaleString()} based on actual spending.` },
           { type: "redistribute", label: "Redistribute from other categories", description: `Take from underutilized categories.` }
         ],
@@ -157,7 +157,7 @@ export default function BudgetPage() {
   }, []);
 
   const calculateTotals = useCallback(() => {
-    if (!budgetData?. expenseCategories) return { expenseAllocated: 0, expenseSpent: 0, remaining: 0, availableToSave: 0 };
+    if (!budgetData?.expenseCategories) return { expenseAllocated: 0, expenseSpent: 0, remaining: 0, availableToSave: 0 };
     const expenseAllocated = budgetData.expenseCategories.reduce((sum, cat) => sum + (cat.allocated || 0), 0);
     const expenseSpent = budgetData.expenseCategories.reduce((sum, cat) => sum + (cat.spent || 0), 0);
     return {
@@ -171,8 +171,8 @@ export default function BudgetPage() {
   const generateAlerts = useCallback((data) => {
     const newAlerts = [];
 
-    if (data?. expenseCategories) {
-      data. expenseCategories. forEach(cat => {
+    if (data?.expenseCategories) {
+      data.expenseCategories.forEach(cat => {
         if (cat.allocated === 0) return;
         const percentage = (cat.spent / cat.allocated) * 100;
         if (percentage > 100) {
@@ -189,7 +189,7 @@ export default function BudgetPage() {
     if (data?.savings && data.savings.allocated > 0) {
       const savingsPercentage = (data.savings.contributed / data.savings.allocated) * 100;
       if (savingsPercentage >= 100) {
-        newAlerts. push({
+        newAlerts.push({
           id: "savings-goal",
           type: "success",
           message: `Savings goal met! ₹${data.savings.contributed.toLocaleString()} saved this month.`,
@@ -205,7 +205,7 @@ export default function BudgetPage() {
       }
     }
 
-    if (data?. expenseCategories) {
+    if (data?.expenseCategories) {
       const totalExpenses = data.expenseCategories.reduce((sum, c) => sum + (c.spent || 0), 0);
       const availableToSave = (data.monthlyIncome || 0) - totalExpenses;
       if (availableToSave > 0) {
@@ -222,27 +222,27 @@ export default function BudgetPage() {
   }, []);
 
   // ========== Transform API Data to Component Format ==========
-  // This follows the same data structure as Insights. jsx uses from /analysis/overview
+  // This follows the same data structure as Insights.jsx uses from /analysis/overview
   const transformApiData = useCallback((overviewData, breakdownData, trendsData, alertsData) => {
     console.log('API Response - Overview:', overviewData);
     console.log('API Response - Breakdown:', breakdownData);
-    console. log('API Response - Trends:', trendsData);
+    console.log('API Response - Trends:', trendsData);
     console.log('API Response - Alerts:', alertsData);
 
     const expenseCategories = [];
     let categoryId = 1;
     let monthlyIncome = 0;
 
-    // Primary source: overview data (same as Insights. jsx uses)
+    // Primary source: overview data (same as Insights.jsx uses)
     if (overviewData?.budget_plan?.breakdown) {
       // Calculate monthly income from budget breakdown
       monthlyIncome = Object.values(overviewData.budget_plan.breakdown).reduce(
-        (sum, item) => sum + (item. amount || 0), 0
+        (sum, item) => sum + (item.amount || 0), 0
       );
 
-      Object.entries(overviewData. budget_plan.breakdown).forEach(([name, data]) => {
+      Object.entries(overviewData.budget_plan.breakdown).forEach(([name, data]) => {
         // Skip savings and emergency from expense categories
-        const lowerName = name. toLowerCase();
+        const lowerName = name.toLowerCase();
         if (lowerName === 'savings' || lowerName === 'emergency') return;
 
         expenseCategories.push({
@@ -258,15 +258,15 @@ export default function BudgetPage() {
     // Secondary source: budget-breakdown endpoint
     if (expenseCategories.length === 0 && breakdownData) {
       // Handle different possible response structures
-      const breakdown = breakdownData. breakdown || breakdownData. categories || breakdownData;
+      const breakdown = breakdownData.breakdown || breakdownData.categories || breakdownData;
       
       if (typeof breakdown === 'object' && breakdown !== null) {
-        Object.entries(breakdown). forEach(([name, data]) => {
+        Object.entries(breakdown).forEach(([name, data]) => {
           const lowerName = name.toLowerCase();
           if (lowerName === 'savings' || lowerName === 'emergency') return;
 
           // Handle different data structures
-          const allocated = data.allocated || data.amount || data. budget || 0;
+          const allocated = data.allocated || data.amount || data.budget || 0;
           const spent = data.spent || data.actual || 0;
 
           expenseCategories.push({
@@ -284,18 +284,18 @@ export default function BudgetPage() {
 
     // Extract savings info
     let savingsData = { allocated: 0, contributed: 0, available: 0 };
-    if (overviewData?.budget_plan?.breakdown?. Savings) {
+    if (overviewData?.budget_plan?.breakdown?.Savings) {
       const savingsBudget = overviewData.budget_plan.breakdown.Savings;
       savingsData = {
         allocated: savingsBudget.amount || 0,
         contributed: overviewData.actual_spending?.Savings || 0,
-        available: (savingsBudget. amount || 0) - (overviewData.actual_spending?.Savings || 0)
+        available: (savingsBudget.amount || 0) - (overviewData.actual_spending?.Savings || 0)
       };
     } else if (overviewData?.budget_plan?.breakdown?.savings) {
       const savingsBudget = overviewData.budget_plan.breakdown.savings;
       savingsData = {
         allocated: savingsBudget.amount || 0,
-        contributed: overviewData.actual_spending?. savings || 0,
+        contributed: overviewData.actual_spending?.savings || 0,
         available: (savingsBudget.amount || 0) - (overviewData.actual_spending?.savings || 0)
       };
     }
@@ -315,12 +315,12 @@ export default function BudgetPage() {
     let historyData = [];
     if (trendsData) {
       // Handle array format
-      if (Array. isArray(trendsData)) {
+      if (Array.isArray(trendsData)) {
         historyData = trendsData.map(trend => ({
           month: trend.month || trend.period || '',
           spent: trend.spent || trend.total_spent || trend.actual || 0,
           budget: trend.budget || trend.total_budget || trend.allocated || 0,
-          saved: (trend.budget || trend.total_budget || 0) - (trend.spent || trend. total_spent || 0)
+          saved: (trend.budget || trend.total_budget || 0) - (trend.spent || trend.total_spent || 0)
         }));
       }
       // Handle object with trends array
@@ -329,15 +329,15 @@ export default function BudgetPage() {
           month: trend.month || trend.period || '',
           spent: trend.spent || trend.total_spent || trend.actual || 0,
           budget: trend.budget || trend.total_budget || trend.allocated || 0,
-          saved: (trend. budget || trend.total_budget || 0) - (trend. spent || trend.total_spent || 0)
+          saved: (trend.budget || trend.total_budget || 0) - (trend.spent || trend.total_spent || 0)
         }));
       }
       // Handle object with monthly data
       else if (typeof trendsData === 'object') {
-        historyData = Object.entries(trendsData). map(([month, data]) => ({
+        historyData = Object.entries(trendsData).map(([month, data]) => ({
           month: month,
-          spent: data.spent || data. actual || 0,
-          budget: data. budget || data.allocated || 0,
+          spent: data.spent || data.actual || 0,
+          budget: data.budget || data.allocated || 0,
           saved: (data.budget || 0) - (data.spent || 0)
         }));
       }
@@ -362,14 +362,14 @@ export default function BudgetPage() {
       const results = await Promise.allSettled([
         budgetApi.getOverview(),           // Same endpoint as Insights.jsx
         budgetApi.getBudgetBreakdown(),    // Budget breakdown
-        budgetApi. getTrends(),             // 6 month trends
+        budgetApi.getTrends(),             // 6 month trends
         budgetApi.getAlerts(),             // Active alerts
       ]);
 
-      const overviewData = results[0].status === 'fulfilled' ? results[0]. value : null;
+      const overviewData = results[0].status === 'fulfilled' ? results[0].value : null;
       const breakdownData = results[1].status === 'fulfilled' ? results[1].value : null;
       const trendsData = results[2].status === 'fulfilled' ?  results[2].value : null;
-      const alertsData = results[3].status === 'fulfilled' ? results[3]. value : null;
+      const alertsData = results[3].status === 'fulfilled' ? results[3].value : null;
 
       // Check if we got any data
       if (!overviewData && !breakdownData) {
@@ -379,7 +379,7 @@ export default function BudgetPage() {
       // Transform API data to component format
       const transformedData = transformApiData(overviewData, breakdownData, trendsData, alertsData);
 
-      if (transformedData. expenseCategories.length === 0) {
+      if (transformedData.expenseCategories.length === 0) {
         setError('No budget categories found. Please set up your budget first.');
       }
 
@@ -387,7 +387,7 @@ export default function BudgetPage() {
       generateAlerts(transformedData);
 
       // Handle API alerts
-      if (alertsData && Array.isArray(alertsData) && alertsData. length > 0) {
+      if (alertsData && Array.isArray(alertsData) && alertsData.length > 0) {
         const formattedAlerts = alertsData.map((alert, idx) => ({
           id: alert.id || `api-alert-${idx}`,
           type: alert.severity || alert.type || "info",
@@ -398,8 +398,8 @@ export default function BudgetPage() {
       }
 
     } catch (err) {
-      console. error('Error fetching budget data:', err);
-      setError(err.message || 'Failed to load budget data.  Please try again.');
+      console.error('Error fetching budget data:', err);
+      setError(err.message || 'Failed to load budget data. Please try again.');
       setBudgetData({
         monthlyIncome: 0,
         expenseCategories: [],
@@ -423,7 +423,7 @@ export default function BudgetPage() {
     setShowAgentPanel(true);
     setAgentMessages([]);
 
-    addAgentMessage("🚀 Starting AI budget generation.. .");
+    addAgentMessage("🚀 Starting AI budget generation...");
 
     try {
       addAgentMessage("📊 Analyzing your income and spending patterns...");
@@ -460,16 +460,16 @@ export default function BudgetPage() {
 
   // ========== AI Analysis ==========
   const startBudgetAnalysis = useCallback(() => {
-    if (!budgetData || !budgetData. expenseCategories || budgetData.expenseCategories.length === 0) {
+    if (!budgetData || !budgetData.expenseCategories || budgetData.expenseCategories.length === 0) {
       setShowAgentPanel(true);
-      addAgentMessage("⚠️ No budget data available for analysis.  Please ensure your budget is set up.");
+      addAgentMessage("⚠️ No budget data available for analysis. Please ensure your budget is set up.");
       return;
     }
 
     setAgentActive(true);
     setShowAgentPanel(true);
     setAgentMessages([]);
-    addAgentMessage("🔍 Starting budget analysis for " + MONTHS[selectedMonth] + ".. .");
+    addAgentMessage("🔍 Starting budget analysis for " + MONTHS[selectedMonth] + "...");
 
     setTimeout(() => {
       const { overages, underages } = analyzeBudget(budgetData);
@@ -481,7 +481,7 @@ export default function BudgetPage() {
           const savingsPercentage = (budgetData.savings.contributed / budgetData.savings.allocated) * 100;
           if (savingsPercentage < 100) {
             setTimeout(() => {
-              addAgentMessage(`💡 You've saved ₹${budgetData.savings.contributed.toLocaleString()} of your ₹${budgetData.savings.allocated.toLocaleString()} savings goal (${savingsPercentage.toFixed(0)}%).  Consider allocating more! `);
+              addAgentMessage(`💡 You've saved ₹${budgetData.savings.contributed.toLocaleString()} of your ₹${budgetData.savings.allocated.toLocaleString()} savings goal (${savingsPercentage.toFixed(0)}%). Consider allocating more! `);
             }, 1000);
           }
         }
@@ -490,7 +490,7 @@ export default function BudgetPage() {
           const emergencyPercentage = (budgetData.emergency.current / budgetData.emergency.target) * 100;
           if (emergencyPercentage < 100) {
             setTimeout(() => {
-              addAgentMessage(`🛡️ Emergency fund is at ${emergencyPercentage. toFixed(0)}% of your target. Keep building it!`);
+              addAgentMessage(`🛡️ Emergency fund is at ${emergencyPercentage.toFixed(0)}% of your target. Keep building it!`);
             }, 2000);
           }
         }
@@ -499,20 +499,20 @@ export default function BudgetPage() {
         return;
       }
 
-      const totalOverage = overages.reduce((sum, o) => sum + o. overage, 0);
+      const totalOverage = overages.reduce((sum, o) => sum + o.overage, 0);
       addAgentMessage(`⚠️ Found ${overages.length} category(ies) over budget with total overage of ₹${totalOverage.toLocaleString()}.`);
 
       setTimeout(() => {
         overages.forEach((overage, idx) => {
           setTimeout(() => {
-            addAgentMessage(`📊 ${overage.icon} ${overage. name}: Exceeded by ₹${overage.overage. toLocaleString()} (${overage.percentage}% of budget)`);
+            addAgentMessage(`📊 ${overage.icon} ${overage.name}: Exceeded by ₹${overage.overage.toLocaleString()} (${overage.percentage}% of budget)`);
           }, idx * 600);
         });
         
         setTimeout(() => {
           const suggestions = generateAdjustmentSuggestions(overages, underages);
           setPendingAdjustments(suggestions);
-          addAgentMessage("🤖 I've prepared adjustment options.  Please review each category below.");
+          addAgentMessage("🤖 I've prepared adjustment options. Please review each category below.");
         }, overages.length * 600 + 500);
       }, 1000);
     }, 1500);
@@ -521,7 +521,7 @@ export default function BudgetPage() {
   // ========== Event Handlers ==========
   const handleAdjustmentChoice = useCallback((adjustmentId, choice, customValue = null) => {
     const adjustment = pendingAdjustments.find(a => a.id === adjustmentId);
-    if (! adjustment) return;
+    if (!adjustment) return;
 
     let userMessage = "";
     let resultMessage = "";
@@ -535,7 +535,7 @@ export default function BudgetPage() {
       case "adjust_increase":
         userMessage = `Increase ${adjustment.categoryName} budget`;
         newBudgetValue = adjustment.suggestedAllocated;
-        resultMessage = `✓ ${adjustment. categoryName} budget increased to ₹${newBudgetValue.toLocaleString()}.`;
+        resultMessage = `✓ ${adjustment.categoryName} budget increased to ₹${newBudgetValue.toLocaleString()}.`;
         break;
       case "redistribute":
         userMessage = `Redistribute to ${adjustment.categoryName}`;
@@ -544,7 +544,7 @@ export default function BudgetPage() {
         if (adjustment.compensationSources.length > 0) {
           const perSource = adjustment.overage / adjustment.compensationSources.length;
           setBudgetData(prev => ({
-            ... prev,
+            ...prev,
             expenseCategories: prev.expenseCategories.map(cat => {
               const source = adjustment.compensationSources.find(s => s.id === cat.id);
               return source ? { ...cat, allocated: cat.allocated - perSource } : cat;
@@ -561,15 +561,15 @@ export default function BudgetPage() {
         return;
     }
 
-    setAgentMessages(prev => [... prev, {
+    setAgentMessages(prev => [...prev, {
       id: Date.now(),
       type: "user",
       message: userMessage,
-      timestamp: new Date(). toLocaleTimeString()
+      timestamp: new Date().toLocaleTimeString()
     }]);
 
     setBudgetData(prev => ({
-      ... prev,
+      ...prev,
       expenseCategories: prev.expenseCategories.map(cat =>
         cat.id === adjustment.categoryId ? { ...cat, allocated: newBudgetValue, adjusted: true } : cat
       )
@@ -606,9 +606,9 @@ export default function BudgetPage() {
   const handleSaveCategory = useCallback(() => {
     if (!editingCategory) return;
     setBudgetData(prev => ({
-      ... prev,
+      ...prev,
       expenseCategories: prev.expenseCategories.map(cat =>
-        cat.id === editingCategory. id ? editingCategory : cat
+        cat.id === editingCategory.id ? editingCategory : cat
       )
     }));
     setEditingCategory(null);
@@ -619,17 +619,17 @@ export default function BudgetPage() {
   }, []);
 
   const handleAddCategory = useCallback(() => {
-    if (! newCategory.name || ! newCategory.allocated) return;
+    if (!newCategory.name || !newCategory.allocated) return;
     const newCat = {
       id: Date.now(),
       name: newCategory.name,
-      allocated: parseFloat(newCategory. allocated),
+      allocated: parseFloat(newCategory.allocated),
       spent: 0,
       icon: newCategory.icon
     };
     setBudgetData(prev => ({
-      ... prev,
-      expenseCategories: [... (prev.expenseCategories || []), newCat]
+      ...prev,
+      expenseCategories: [...(prev.expenseCategories || []), newCat]
     }));
     setNewCategory({ name: "", allocated: "", icon: "📦" });
     setShowAddModal(false);
@@ -638,17 +638,17 @@ export default function BudgetPage() {
   const handleDeleteCategory = useCallback((categoryId) => {
     setBudgetData(prev => ({
       ...prev,
-      expenseCategories: prev.expenseCategories.filter(cat => cat. id !== categoryId)
+      expenseCategories: prev.expenseCategories.filter(cat => cat.id !== categoryId)
     }));
   }, []);
 
   const handleAllocate = useCallback((amount, type) => {
     if (type === 'savings') {
       setBudgetData(prev => ({
-        ... prev,
+        ...prev,
         savings: {
-          ... prev.savings,
-          contributed: (prev.savings?. contributed || 0) + amount,
+          ...prev.savings,
+          contributed: (prev.savings?.contributed || 0) + amount,
           available: (prev.savings?.available || 0) + amount
         }
       }));
@@ -669,18 +669,18 @@ export default function BudgetPage() {
   }, []);
 
   const handleExportData = useCallback(() => {
-    if (!budgetData?. expenseCategories) return;
+    if (!budgetData?.expenseCategories) return;
     const headers = ["Category", "Allocated", "Spent", "Remaining", "Status"];
-    const rows = budgetData. expenseCategories. map(cat => {
-      const remaining = cat.allocated - cat. spent;
-      return [cat.name, cat. allocated, cat.spent, remaining, remaining >= 0 ? "Under Budget" : "Over Budget"];
+    const rows = budgetData.expenseCategories.map(cat => {
+      const remaining = cat.allocated - cat.spent;
+      return [cat.name, cat.allocated, cat.spent, remaining, remaining >= 0 ? "Under Budget" : "Over Budget"];
     });
     const csvContent = [headers.join(","), ...rows.map(row => row.join(","))].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = URL. createObjectURL(blob);
+    const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `budget-${MONTHS[selectedMonth]}-${selectedYear}. csv`;
+    a.download = `budget-${MONTHS[selectedMonth]}-${selectedYear}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }, [budgetData, selectedMonth, selectedYear]);
@@ -697,11 +697,11 @@ export default function BudgetPage() {
 
   const totals = calculateTotals();
   const hasOverages = budgetData?.expenseCategories?.some(c => c.spent > c.allocated) || false;
-  const savingsPercentage = budgetData?.savings?. allocated > 0 
-    ? (budgetData.savings.contributed / budgetData. savings.allocated) * 100 
+  const savingsPercentage = budgetData?.savings?.allocated > 0 
+    ? (budgetData.savings.contributed / budgetData.savings.allocated) * 100 
     : 0;
   const emergencyPercentage = budgetData?.emergency?.target > 0 
-    ? (budgetData.emergency.current / budgetData. emergency.target) * 100 
+    ? (budgetData.emergency.current / budgetData.emergency.target) * 100 
     : 0;
 
   // ========== Render ==========
@@ -749,7 +749,7 @@ export default function BudgetPage() {
             animate={{ opacity: 1, y: 0 }}
           >
             <SavingsCard
-              savings={budgetData?. savings}
+              savings={budgetData?.savings}
               savingsPercentage={savingsPercentage}
               onAddClick={() => openAllocateModal('savings')}
             />
@@ -758,11 +758,11 @@ export default function BudgetPage() {
               emergencyPercentage={emergencyPercentage}
               onAddClick={() => openAllocateModal('emergency')}
             />
-          </motion. div>
+          </motion.div>
 
           {/* Expense Categories Table */}
           <ExpenseCategoriesTable
-            categories={budgetData?. expenseCategories || []}
+            categories={budgetData?.expenseCategories || []}
             totals={totals}
             editingCategory={editingCategory}
             setEditingCategory={setEditingCategory}
