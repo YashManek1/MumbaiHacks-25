@@ -1,0 +1,79 @@
+# Python compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+venv/
+.venv/
+env/
+
+# Environment Variables (CRITICAL: Contains Secrets)
+.env
+.env.local
+.env.*.local
+
+# Distribution / Packaging
+dist/
+build/
+*.egg-info/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+nosetests.xml
+coverage.xml
+
+# IDE / Editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files// filepath: c:\Hackathons\Mumbai Hacks '25\Final_FinanceAssistant\.gitignore
+# Python compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+venv/
+.venv/
+env/
+
+# Environment Variables (CRITICAL: Contains Secrets)
+.env
+.env.local
+.env.*.local
+
+# Distribution / Packaging
+dist/
+build/
+*.egg-info/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+nosetests.xml
+coverage.xml
+
+# IDE / Editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Local Databases (if any)
+*.sqlite
+*.db

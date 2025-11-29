@@ -1,0 +1,35 @@
+# FastAPI & Server
+fastapi
+uvicorn[standard]
+
+# Database - SQLModel with Async PostgreSQL
+sqlmodel
+asyncpg
+sqlalchemy[asyncio]
+
+# Configuration & Environment
+pydantic-settings
+python-dotenv
+
+# Authentication & Security
+python-jose[cryptography]
+passlib[bcrypt]
+
+# File Upload & Form Handling
+python-multipart
+
+# Google Gemini AI (for Agent)
+google-generativeai
+
+# Data Processing & Parsing
+pandas
+
+# OCR for Receipt Scanning
+pytesseract
+Pillow
+
+# HTTP Client (if needed for external APIs)
+httpx
+aiohttp
+
+passlib
