@@ -24,53 +24,59 @@ const StatCard = ({ title, value, icon, isLoading }) => (
 
 const BudgetPieChart = ({ data, isLoading }) => (
   <div className="bg-gray-800 p-6 rounded-lg h-full">
-    <h2 className="text-xl font-bold text-white mb-4">Budget Allocation</h2>
-    <ResponsiveContainer width="100%" height={500}>
+    <h2 className="text-xl font-bold text-white mb-4">Spending by Category</h2>
+    <ResponsiveContainer width="100%" height={400}>
       {isLoading ? (
         <div className="flex items-center justify-center h-full"><FiLoader className="animate-spin text-blue-400 text-3xl" /></div>
       ) : data && data.length > 0 ? (
         <PieChart>
-          <Pie data={data} cx="50%" cy="50%" labelLine={false} outerRadius={100} fill="#8884d8" dataKey="value" nameKey="name" label={({ name, percent }) => `${(percent * 1).toFixed(0)}%`}>
+          <Pie data={data} cx="50%" cy="50%" labelLine={false} outerRadius={120} fill="#8884d8" dataKey="value" nameKey="name" label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}>
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>
-          <Tooltip formatter={(value, name, props) => [`${new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(value)} (${props.payload.percent.toFixed(0)}%)`, name]} />
+          <Tooltip formatter={(value, name, props) => [`${new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(value)} (${(props.payload.percent * 100).toFixed(1)}%)`, name]} />
           <Legend />
         </PieChart>
       ) : (
-        <div className="flex items-center justify-center h-full text-gray-500">No budget data available.</div>
+        <div className="flex items-center justify-center h-full text-gray-500">No spending data available.</div>
       )}
     </ResponsiveContainer>
   </div>
 );
 
-const BudgetVsActualChart = ({ data, isLoading }) => (
-  <div className="bg-gray-800 p-6 rounded-lg">
-    <h2 className="text-xl font-bold text-white mb-4">Budget vs. Actual Spending</h2>
-    <ResponsiveContainer width="100%" height={500}>
+const SpendingBarChart = ({ data, isLoading }) => (
+  <div className="bg-gray-800 p-6 rounded-lg h-full">
+    <h2 className="text-xl font-bold text-white mb-4">Spending Breakdown</h2>
+    <ResponsiveContainer width="100%" height={400}>
       {isLoading ? (
         <div className="flex items-center justify-center h-full"><FiLoader className="animate-spin text-blue-400 text-3xl" /></div>
-      ) : (
-        <BarChart data={data} layout="vertical" margin={{ top: 5, right: 20, left: 50, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-          <XAxis type="number" stroke="#9ca3af" fontSize={12} tickFormatter={(value) => `₹${value / 1000}k`} />
-          <YAxis type="category" dataKey="name" stroke="#9ca3af" fontSize={10} width={100} />
+      ) : data && data.length > 0 ? (
+        <BarChart data={data} layout="vertical" margin={{ top: 5, right: 30, left: 100, bottom: 5 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#4A5568" />
+          <XAxis type="number" stroke="#9CA3AF" tickFormatter={(value) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', notation: 'compact' }).format(value)} />
+          <YAxis dataKey="name" type="category" stroke="#9CA3AF" width={80} interval={0} />
           <Tooltip
-            contentStyle={{ backgroundColor: '#1f2937', border: 'none' }}
-            formatter={(value) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(value)}
+            cursor={{ fill: 'rgba(147, 197, 253, 0.1)' }}
+            contentStyle={{ backgroundColor: '#2D3748', border: '1px solid #4A5568' }}
+            formatter={(value) => [new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(value), 'Amount']}
           />
-          <Legend />
-          <Bar dataKey="budget" fill="#00C49F" name="Budgeted" />
-          <Bar dataKey="actual" fill="#FF8042" name="Actual" />
+          <Bar dataKey="value" barSize={20}>
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Bar>
         </BarChart>
+      ) : (
+        <div className="flex items-center justify-center h-full text-gray-500">No spending data available.</div>
       )}
     </ResponsiveContainer>
   </div>
 );
 
+
 const Insights = () => {
-  const [overviewData, setOverviewData] = useState(null);
+  const [spendingData, setSpendingData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -94,7 +100,7 @@ const Insights = () => {
           throw new Error('Failed to fetch insights data.');
         }
         const data = await response.json();
-        setOverviewData(data);
+        setSpendingData(data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -107,23 +113,19 @@ const Insights = () => {
 
   const formatCurrency = (value) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(value);
 
-  const { totalIncome, totalSpending, budgetAllocationData, budgetVsActualData } = useMemo(() => {
-    if (!overviewData) return { totalIncome: 0, totalSpending: 0, budgetAllocationData: [], budgetVsActualData: [] };
+  const { totalSpending, pieChartData } = useMemo(() => {
+    if (!spendingData || spendingData.length === 0) return { totalSpending: 0, pieChartData: [] };
 
-    const totalIncome = Object.values(overviewData.budget_plan.breakdown).reduce((sum, item) => sum + item.amount, 0);
-    const totalSpending = Object.values(overviewData.actual_spending).reduce((sum, value) => sum + value, 0);
+    const totalSpending = spendingData.reduce((sum, item) => sum + item.amount, 0);
 
-    const budgetAllocationData = Object.entries(overviewData.budget_plan.breakdown)
-      .map(([name, { amount, percent }]) => ({ name, value: amount, percent }));
-
-    const budgetVsActualData = Object.keys(overviewData.budget_plan.breakdown).map(category => ({
-      name: category,
-      budget: overviewData.budget_plan.breakdown[category].amount,
-      actual: overviewData.actual_spending[category] || 0,
+    const pieChartData = spendingData.map(item => ({
+      name: item.category,
+      value: item.amount,
+      percent: item.percentage / 100, // Convert percentage to a decimal for the chart
     }));
 
-    return { totalIncome, totalSpending, budgetAllocationData, budgetVsActualData };
-  }, [overviewData]);
+    return { totalSpending, pieChartData };
+  }, [spendingData]);
 
   return (
     <div className="bg-[#1a202c] text-gray-200 p-8 h-full overflow-y-auto">
@@ -137,31 +139,17 @@ const Insights = () => {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <StatCard title="Monthly Income" value={formatCurrency(totalIncome)} icon={<FiDollarSign size={22} />} isLoading={loading} />
-        <StatCard title="Monthly Spending" value={formatCurrency(totalSpending)} icon={<FiArrowDown size={22} className="text-red-400" />} isLoading={loading} />
-        <StatCard title="Emergency Fund Target" value={formatCurrency(overviewData?.emergency_fund?.target_amount || 0)} icon={<FiTrendingUp size={22} />} isLoading={loading} />
+        <StatCard title="Total Monthly Spending" value={formatCurrency(totalSpending)} icon={<FiArrowDown size={22} className="text-red-400" />} isLoading={loading} />
       </div>
 
       {/* Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <div className="lg:col-span-3">
-          <BudgetVsActualChart data={budgetVsActualData} isLoading={loading} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="col-span-1">
+          <BudgetPieChart data={pieChartData} isLoading={loading} />
         </div>
-        <div className="lg:col-span-2">
-          <BudgetPieChart data={budgetAllocationData} isLoading={loading} />
+        <div className="col-span-1">
+          <SpendingBarChart data={pieChartData} isLoading={loading} />
         </div>
-      </div>
-
-      {/* Financial Tip */}
-      <div className="bg-gray-800 p-6 rounded-lg mt-8">
-        <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><FiTrendingUp /> Analyst's Recommendation</h2>
-        {loading ? (
-          <FiLoader className="animate-spin text-blue-400" />
-        ) : (
-          <p className="text-gray-300">
-            {overviewData?.risk_profile?.recommended_strategy || "No specific recommendations at this time."}
-          </p>
-        )}
       </div>
     </div>
   );

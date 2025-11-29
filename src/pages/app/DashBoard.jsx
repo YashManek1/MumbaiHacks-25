@@ -33,13 +33,13 @@ const apiRequest = async (url, options) => {
 
 // --- Components ---
 
-const StatCard = ({ title, value, icon, isLoading }) => (
+const StatCard = ({ title, value, icon, isLoading, isPercentage = false }) => (
   <div className="bg-gray-800/50 p-5 rounded-xl border border-gray-700/50">
     <div className="flex items-center gap-4">
       <div className="bg-gray-900/50 p-3 rounded-lg">{icon}</div>
       <div>
         <p className="text-sm text-gray-400">{title}</p>
-        {isLoading ? <div className="h-8 flex items-center"><FiLoader className="animate-spin text-blue-400" /></div> : <p className="text-2xl font-bold text-white">{value}</p>}
+        {isLoading ? <div className="h-8 flex items-center"><FiLoader className="animate-spin text-blue-400" /></div> : <p className="text-2xl font-bold text-white">{isPercentage ? `${value}%` : value}</p>}
       </div>
     </div>
   </div>
@@ -94,7 +94,13 @@ const ActionItem = ({ item, onAction, isHistory }) => {
 
 const DashBoard = () => {
   const [balanceVisible, setBalanceVisible] = useState(false);
-  const [stats, setStats] = useState({ totalBalance: 0, monthlySpending: 0, emergencyFundTarget: 0 });
+  const [stats, setStats] = useState({
+    availableLiquidCash: 0,
+    totalExpenses: 0,
+    monthlyIncome: 0,
+    cashFlowSavings: 0,
+    savingsRate: 0,
+  });
   const [loadingStats, setLoadingStats] = useState(true);
   const [actions, setActions] = useState({ pending: [], history: [] });
   const [loadingActions, setLoadingActions] = useState(true);
@@ -110,13 +116,14 @@ const DashBoard = () => {
 
     // --- Fetch Stats Data ---
     try {
-      const [overviewRes, transactionsRes] = await Promise.all([
-        apiRequest('api/v1/analysis/overview', {}),
-        apiRequest('api/v1/transactions/', {}),
-      ]);
-      const totalBalance = transactionsRes.reduce((acc, tx) => acc + tx.amount, 0);
-      const monthlySpending = Object.values(overviewRes.actual_spending).reduce((sum, val) => sum + val, 0);
-      setStats({ totalBalance, monthlySpending, emergencyFundTarget: overviewRes.emergency_fund.target_amount });
+      const overviewRes = await apiRequest('api/v1/analysis/dashboard', {});
+      setStats({
+        availableLiquidCash: overviewRes.available_liquid_cash,
+        totalExpenses: overviewRes.total_expenses,
+        monthlyIncome: overviewRes.monthly_income,
+        cashFlowSavings: overviewRes.cash_flow_savings,
+        savingsRate: overviewRes.savings_rate,
+      });
     } catch (err) {
       setError(prev => prev ? `${prev}\nFailed to load stats: ${err.message}` : `Failed to load stats: ${err.message}`);
     } finally {
@@ -189,23 +196,25 @@ const DashBoard = () => {
 
       {error && <div className="bg-red-500/20 text-red-300 p-3 rounded-md mb-6 whitespace-pre-wrap">{error}</div>}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {/* Custom Total Balance Card */}
-        <div className="md:col-span-1 bg-gradient-to-br from-blue-600 to-blue-800 p-6 rounded-xl border border-blue-500/50 flex flex-col justify-between">
+        <div className="lg:col-span-2 bg-gradient-to-br from-blue-600 to-blue-800 p-6 rounded-xl border border-blue-500/50 flex flex-col justify-between">
           <div>
-            <p className="text-sm text-blue-200">Total Balance</p>
+            <p className="text-sm text-blue-200">Available Liquid Cash</p>
             {loadingStats ? (
               <div className="h-10 flex items-center mt-2"><FiLoader className="animate-spin text-white" /></div>
             ) : (
-              <p className="text-3xl font-bold text-white mt-1">{formatCurrency(stats.totalBalance)}</p>
+              <p className="text-3xl font-bold text-white mt-1">{formatCurrency(stats.availableLiquidCash)}</p>
             )}
           </div>
-          <p className="text-xs text-blue-300/70 mt-4">This is the net sum of all your transactions.</p>
+          <p className="text-xs text-blue-300/70 mt-4">The cash you have readily available across accounts.</p>
         </div>
 
         {/* Other Stat Cards */}
-        <StatCard title="Monthly Spending" value={formatCurrency(stats.monthlySpending)} icon={<FiDollarSign />} isLoading={loadingStats} />
-        <StatCard title="Emergency Fund Target" value={formatCurrency(stats.emergencyFundTarget)} icon={<FiTarget />} isLoading={loadingStats} />
+        <StatCard title="Monthly Income" value={formatCurrency(stats.monthlyIncome)} icon={<FiArrowUp className="text-green-400" />} isLoading={loadingStats} />
+        <StatCard title="Monthly Expenses" value={formatCurrency(stats.totalExpenses)} icon={<FiArrowDown className="text-red-400" />} isLoading={loadingStats} />
+        <StatCard title="Cash Flow (Savings)" value={formatCurrency(stats.cashFlowSavings)} icon={<FiDollarSign className="text-indigo-400" />} isLoading={loadingStats} />
+        <StatCard title="Savings Rate" value={stats.savingsRate} icon={<FiTrendingUp className="text-teal-400" />} isLoading={loadingStats} isPercentage={true} />
       </div>
 
       <div className="grid grid-cols-1">
