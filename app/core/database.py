@@ -1,4 +1,5 @@
 import ssl
+import certifi
 from sqlmodel import SQLModel
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
 from sqlalchemy.orm import sessionmaker
@@ -8,9 +9,10 @@ from app.core.config import settings
 import logging
 
 # --- SSL CONFIGURATION ---
-ssl_context = ssl.create_default_context()
-ssl_context.check_hostname = True  # Enable hostname verification in production
-ssl_context.verify_mode = ssl.CERT_REQUIRED  # Use CERT_REQUIRED in production
+# Use certifi's CA bundle which includes most trusted CAs
+ssl_context = ssl.create_default_context(cafile=certifi.where())
+ssl_context.check_hostname = True
+ssl_context.verify_mode = ssl.CERT_REQUIRED
 
 # --- DATABASE ENGINE ---
 engine: AsyncEngine = create_async_engine(
