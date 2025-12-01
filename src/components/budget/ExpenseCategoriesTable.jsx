@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { FiPlus } from 'react-icons/fi';
-import ExpenseCategoryRow from './ExpenseCategoryRow';
+import React from "react";
+import { motion } from "framer-motion";
+import { FiPlus } from "react-icons/fi";
+import ExpenseCategoryRow from "./ExpenseCategoryRow";
 
 const ExpenseCategoriesTable = ({
   categories,
@@ -12,10 +12,10 @@ const ExpenseCategoriesTable = ({
   onEdit,
   onSave,
   onCancelEdit,
-  onDelete
+  onDelete,
 }) => {
   return (
-    <motion.div 
+    <motion.div
       className="mb-8 bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
@@ -46,20 +46,38 @@ const ExpenseCategoriesTable = ({
 
       {/* Table Body */}
       <div className="divide-y divide-gray-800/50">
-        {categories.map((category, idx) => (
-          <ExpenseCategoryRow
-            key={category.id}
-            category={category}
-            index={idx}
-            isEditing={editingCategory?. id === category.id}
-            editingCategory={editingCategory}
-            setEditingCategory={setEditingCategory}
-            onEdit={onEdit}
-            onSave={onSave}
-            onCancelEdit={onCancelEdit}
-            onDelete={onDelete}
-          />
-        ))}
+        {categories.length > 0 ? (
+          categories.map((category, idx) => (
+            <ExpenseCategoryRow
+              key={category.id}
+              category={category}
+              index={idx}
+              isEditing={editingCategory?.id === category.id}
+              editingCategory={editingCategory}
+              setEditingCategory={setEditingCategory}
+              onEdit={onEdit}
+              onSave={onSave}
+              onCancelEdit={onCancelEdit}
+              onDelete={onDelete}
+            />
+          ))
+        ) : (
+          <div className="px-6 py-12 text-center">
+            <div className="text-6xl mb-4">📊</div>
+            <h3 className="text-lg font-semibold text-gray-300 mb-2">
+              No Budget Categories Yet
+            </h3>
+            <p className="text-sm text-gray-500 mb-4">
+              Start by uploading your transactions or add categories manually
+            </p>
+            <button
+              onClick={onAddClick}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition inline-flex items-center gap-2"
+            >
+              <FiPlus /> Add Your First Category
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Table Footer */}
@@ -72,8 +90,13 @@ const ExpenseCategoriesTable = ({
           ₹{totals.expenseSpent.toLocaleString()}
         </div>
         <div className="col-span-2 text-right">
-          <span className={totals.remaining >= 0 ?  'text-green-400' : 'text-red-400'}>
-            {totals.remaining >= 0 ? '' : '-'}₹{Math.abs(totals.remaining). toLocaleString()}
+          <span
+            className={
+              totals.remaining >= 0 ? "text-green-400" : "text-red-400"
+            }
+          >
+            {totals.remaining >= 0 ? "" : "-"}₹
+            {Math.abs(totals.remaining).toLocaleString()}
           </span>
         </div>
         <div className="col-span-2"></div>

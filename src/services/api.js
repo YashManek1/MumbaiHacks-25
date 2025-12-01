@@ -12,36 +12,22 @@ const api = axios.create({
   },
 });
 
-// ============================================================
-// 2.  REQUEST INTERCEPTOR (Attach Token Safely)
-// ============================================================
-api.interceptors.request.use(
-  (config) => {
-    let token = null;
-    if (typeof window !== "undefined" && window.localStorage) {
-      token = localStorage.getItem("token");
-    }
+// Add token to requests
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-    if (token) {
-      if (!config.headers) {
-        config.headers = {};
-      }
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-// ============================================================
-// 3. RESPONSE INTERCEPTOR (Handle 401 / Expired Token)
-// ============================================================
+// Handle response errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      console.warn("Session expired or unauthorized. Redirecting to login...");
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      window.location.href = "/login";
     }
     return Promise.reject(error);
   }
@@ -78,102 +64,6 @@ export const authApi = {
     } catch (error) {
       console.error(
         "Error logging in:",
-        error?.response?.data || error.message
-      );
-      throw error;
-    }
-  },
-};
-
-// ============================================================
-// 5. GOALS API - Aligned with Backend Endpoints
-// ============================================================
-export const goalsApi = {
-  // GET /api/v1/goals/ - Get all goals for current user
-  getAllGoals: async () => {
-    try {
-      const response = await api.get("/goals/");
-      return response.data;
-    } catch (error) {
-      console.error(
-        "Error fetching goals:",
-        error?.response?.data || error.message
-      );
-      throw error;
-    }
-  },
-
-  // POST /api/v1/goals/ - Create a new goal
-  createGoal: async (goalData) => {
-    try {
-      const response = await api.post("/goals/", goalData);
-      return response.data;
-    } catch (error) {
-      console.error(
-        "Error creating goal:",
-        error?.response?.data || error.message
-      );
-      throw error;
-    }
-  },
-
-  // Note: Backend does NOT have a PUT /goals/{id} endpoint
-  updateGoal: async (id, goalData) => {
-    console.warn("Update goal endpoint not implemented in backend");
-    return { ...goalData, id };
-  },
-
-  // DELETE /api/v1/goals/{goal_id} - Delete a goal
-  deleteGoal: async (id) => {
-    try {
-      const response = await api.delete(`/goals/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error(
-        "Error deleting goal:",
-        error?.response?.data || error.message
-      );
-      throw error;
-    }
-  },
-
-  // POST /api/v1/goals/{goal_id}/fund - Fund a goal from savings
-  fundGoal: async (id, amount) => {
-    try {
-      const response = await api.post(`/goals/${id}/fund`, { amount });
-      return response.data;
-    } catch (error) {
-      console.error(
-        "Error funding goal:",
-        error?.response?.data || error.message
-      );
-      throw error;
-    }
-  },
-
-  // GET /api/v1/goals/savings/info - Get savings information
-  getSavingsInfo: async () => {
-    try {
-      const response = await api.get("/goals/savings/info");
-      return response.data;
-    } catch (error) {
-      console.error(
-        "Error getting savings info:",
-        error?.response?.data || error.message
-      );
-      throw error;
-    }
-  },
-
-  // POST /api/v1/goals/savings/add - Add money to savings
-  // Backend expects: { amount: float } only
-  addSavings: async (amount) => {
-    try {
-      const response = await api.post("/goals/savings/add", { amount });
-      return response.data;
-    } catch (error) {
-      console.error(
-        "Error adding savings:",
         error?.response?.data || error.message
       );
       throw error;
@@ -466,6 +356,97 @@ export const transactionsApi = {
     } catch (error) {
       console.error(
         "Error updating transaction:",
+        error?.response?.data || error.message
+      );
+      throw error;
+    }
+  },
+};
+
+// ============================================================
+// 9. GOALS API
+// ============================================================
+export const goalsApi = {
+  // GET /api/v1/goals/savings/info - Get savings information
+  getSavingsInfo: async () => {
+    try {
+      const response = await api.get("/goals/savings/info");
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error fetching savings info:",
+        error?.response?.data || error.message
+      );
+      throw error;
+    }
+  },
+
+  // GET /api/v1/goals/ - Get all goals
+  getGoals: async () => {
+    try {
+      const response = await api.get("/goals/");
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error fetching goals:",
+        error?.response?.data || error.message
+      );
+      throw error;
+    }
+  },
+
+  // POST /api/v1/goals/ - Create a new goal
+  createGoal: async (goalData) => {
+    try {
+      const response = await api.post("/goals/", goalData);
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error creating goal:",
+        error?.response?.data || error.message
+      );
+      throw error;
+    }
+  },
+
+  // PATCH /api/v1/goals/{goal_id} - Update a goal
+  updateGoal: async (goalId, goalData) => {
+    try {
+      const response = await api.patch(`/goals/${goalId}`, goalData);
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error updating goal:",
+        error?.response?.data || error.message
+      );
+      throw error;
+    }
+  },
+
+  // DELETE /api/v1/goals/{goal_id} - Delete a goal
+  deleteGoal: async (goalId) => {
+    try {
+      const response = await api.delete(`/goals/${goalId}`);
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error deleting goal:",
+        error?.response?.data || error.message
+      );
+      throw error;
+    }
+  },
+
+  // POST /api/v1/goals/{goal_id}/contribute - Contribute to a goal
+  contributeToGoal: async (goalId, amount) => {
+    try {
+      const response = await api.post(`/goals/${goalId}/contribute`, {
+        amount,
+      });
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error contributing to goal:",
         error?.response?.data || error.message
       );
       throw error;

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { budgetApi, goalsApi } from "../services/api.js";
 
 // Import all components
@@ -316,12 +317,15 @@ export default function BudgetPage() {
       const expenseCategories = [];
       let categoryId = 1;
 
-      if (Array.isArray(breakdownData)) {
+      if (Array.isArray(breakdownData) && breakdownData.length > 0) {
+        console.log(`📦 Processing ${breakdownData.length} budget categories`);
         breakdownData.forEach((item) => {
           // Skip savings-related categories from expense list
           const lowerCat = (item.category || "").toLowerCase();
-          if (lowerCat.includes("savings") || lowerCat.includes("investment"))
+          if (lowerCat.includes("savings") || lowerCat.includes("investment")) {
+            console.log(`⏭️ Skipping savings category: ${item.category}`);
             return;
+          }
 
           expenseCategories.push({
             id: categoryId++,
@@ -333,6 +337,11 @@ export default function BudgetPage() {
             icon: getCategoryIcon(item.category),
           });
         });
+      } else {
+        console.log(
+          "⚠️ Budget breakdown is empty or not an array:",
+          breakdownData
+        );
       }
 
       // Extract savings data
@@ -392,10 +401,16 @@ export default function BudgetPage() {
     setError("");
 
     try {
+      // Get current month and year (JS months are 0-indexed, API expects 1-12)
+      const apiMonth = selectedMonth + 1;
+      const apiYear = selectedYear;
+
+      console.log(`🔍 Fetching budget data for ${apiMonth}/${apiYear}`);
+
       // Fetch all budget-related data in parallel
       const results = await Promise.allSettled([
         budgetApi.getDashboardData(), // Dashboard summary
-        budgetApi.getBudgetBreakdown(selectedMonth + 1, selectedYear), // Budget breakdown with month/year
+        budgetApi.getBudgetBreakdown(apiMonth, apiYear), // Budget breakdown with month/year
         budgetApi.getTrends(), // 6 month trends
         budgetApi.getAlerts(), // Active alerts from agent
         goalsApi.getSavingsInfo(), // Savings info from goals API
@@ -447,14 +462,26 @@ export default function BudgetPage() {
 
       setAlerts([...backendAlerts, ...localAlerts]);
 
-      if (transformedData.expenseCategories.length === 0 && !dashboardData) {
-        setError(
-          "No budget data found.Please upload transactions or set up your budget."
+      // Show helpful message when no data exists
+      if (transformedData.expenseCategories.length === 0) {
+        if (!dashboardData || dashboardData.total_expenses === 0) {
+          setError(
+            "📊 No transaction data found for this month. Upload transactions to see your budget breakdown!"
+          );
+        } else {
+          // Has expenses but no budget categories - this is actually OK, show the data
+          console.log(
+            "✅ Budget data loaded successfully (no categories defined yet)"
+          );
+        }
+      } else {
+        console.log(
+          `✅ Budget data loaded: ${transformedData.expenseCategories.length} categories`
         );
       }
     } catch (err) {
-      console.error("Error fetching budget data:", err);
-      setError(err.message || "Failed to load budget data.  Please try again.");
+      console.error("❌ Error fetching budget data:", err);
+      setError(err.message || "Failed to load budget data. Please try again.");
       setBudgetData({
         monthlyIncome: 0,
         totalExpenses: 0,

@@ -1,47 +1,54 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { FiTrendingUp, FiDollarSign } from 'react-icons/fi';
-import { FaPiggyBank, FaWallet } from 'react-icons/fa';
+import React from "react";
+import { motion } from "framer-motion";
+import { FiTrendingUp, FiDollarSign } from "react-icons/fi";
+import { FaPiggyBank, FaWallet } from "react-icons/fa";
 
 const OverviewCards = ({ budgetData, totals, savingsPercentage }) => {
+  // Safe number formatting
+  const formatNumber = (num) => {
+    const value = Number(num) || 0;
+    return value.toLocaleString();
+  };
+
   const cards = [
     {
       icon: FaWallet,
-      iconBg: 'bg-blue-900/50',
-      iconColor: 'text-blue-400',
-      label: 'Monthly Income',
-      value: `₹${budgetData.monthlyIncome.toLocaleString()}`,
-      subtitle: null
+      iconBg: "bg-blue-900/50",
+      iconColor: "text-blue-400",
+      label: "Monthly Income",
+      value: `₹${formatNumber(budgetData?.monthlyIncome || 0)}`,
+      subtitle: null,
     },
     {
       icon: FiTrendingUp,
-      iconBg: 'bg-red-900/50',
-      iconColor: 'text-red-400',
-      label: 'Total Expenses',
-      value: `₹${totals.expenseSpent.toLocaleString()}`,
-      subtitle: `of ₹${totals.expenseAllocated.toLocaleString()} budgeted`
+      iconBg: "bg-red-900/50",
+      iconColor: "text-red-400",
+      label: "Total Expenses",
+      value: `₹${formatNumber(totals?.expenseSpent || 0)}`,
+      subtitle: `of ₹${formatNumber(totals?.expenseAllocated || 0)} budgeted`,
     },
     {
       icon: FaPiggyBank,
-      iconBg: 'bg-green-900/50',
-      iconColor: 'text-green-400',
-      label: 'Savings This Month',
-      value: `₹${budgetData.savings.contributed.toLocaleString()}`,
-      subtitle: `${savingsPercentage.toFixed(0)}% of goal`
+      iconBg: "bg-green-900/50",
+      iconColor: "text-green-400",
+      label: "Savings This Month",
+      value: `₹${formatNumber(budgetData?.savings?.contributed || 0)}`,
+      subtitle: `${(savingsPercentage || 0).toFixed(0)}% of goal`,
     },
     {
       icon: FiDollarSign,
-      iconBg: 'bg-purple-900/50',
-      iconColor: 'text-purple-400',
-      label: 'Available to Save',
-      value: `₹${Math.abs(totals.availableToSave). toLocaleString()}`,
-      valueColor: totals.availableToSave >= 0 ? 'text-green-400' : 'text-red-400',
-      subtitle: 'After all expenses'
-    }
+      iconBg: "bg-purple-900/50",
+      iconColor: "text-purple-400",
+      label: "Available to Save",
+      value: `₹${formatNumber(Math.abs(totals?.availableToSave || 0))}`,
+      valueColor:
+        (totals?.availableToSave || 0) >= 0 ? "text-green-400" : "text-red-400",
+      subtitle: "After all expenses",
+    },
   ];
 
   return (
-    <motion.div 
+    <motion.div
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
@@ -60,7 +67,9 @@ const OverviewCards = ({ budgetData, totals, savingsPercentage }) => {
             </div>
             <span className="text-gray-400 text-sm">{card.label}</span>
           </div>
-          <p className={`text-2xl font-bold ${card.valueColor || 'text-white'}`}>
+          <p
+            className={`text-2xl font-bold ${card.valueColor || "text-white"}`}
+          >
             {card.value}
           </p>
           {card.subtitle && (
