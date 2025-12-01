@@ -5,6 +5,7 @@ from datetime import datetime, date
 
 class Goal(SQLModel, table=True):
     """Savings goals - matches frontend expectations."""
+
     __tablename__ = "goals"
 
     id: Optional[int] = Field(default=None, primary_key=True)

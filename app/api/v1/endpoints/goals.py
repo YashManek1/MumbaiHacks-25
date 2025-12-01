@@ -104,6 +104,7 @@ def calculate_estimated_completion(current: float, total: float, monthly: float)
         return "Completed"
     months = remaining / monthly
     from datetime import timedelta
+
     completion = datetime.now() + timedelta(days=months * 30)
     return completion.strftime("%b %Y")
 
@@ -114,7 +115,7 @@ def goal_to_response(goal: Goal) -> dict:
     total_val = float(goal.total or 1)
     progress = (current_val / total_val * 100) if total_val > 0 else 0
     remaining = max(total_val - current_val, 0)
-    
+
     return {
         "id": goal.id,
         "title": goal.title,
@@ -123,7 +124,8 @@ def goal_to_response(goal: Goal) -> dict:
         "total": total_val,
         "priority": goal.priority or "medium",
         "monthly_contribution": float(goal.monthly_contribution or 100),
-        "estimated_completion": goal.estimated_completion or calculate_estimated_completion(
+        "estimated_completion": goal.estimated_completion
+        or calculate_estimated_completion(
             current_val, total_val, float(goal.monthly_contribution or 100)
         ),
         "progress": round(progress, 1),
@@ -192,7 +194,7 @@ async def create_goal(
         estimated = calculate_estimated_completion(
             0, goal_data.total, goal_data.monthly_contribution
         )
-        
+
         goal = Goal(
             user_id=current_user.id,
             title=goal_data.title,
@@ -261,7 +263,9 @@ async def update_goal(
 
     # Recalculate estimated completion
     goal.estimated_completion = calculate_estimated_completion(
-        float(goal.current or 0), float(goal.total or 1), float(goal.monthly_contribution or 100)
+        float(goal.current or 0),
+        float(goal.total or 1),
+        float(goal.monthly_contribution or 100),
     )
 
     # Check if goal is completed
@@ -320,7 +324,7 @@ async def fund_goal(
         raise HTTPException(status_code=404, detail="Goal not found")
 
     savings = await get_or_create_savings(session, current_user.id)
-    
+
     if fund_data.amount > savings.savings_available:
         raise HTTPException(status_code=400, detail="Insufficient savings available")
 
@@ -377,7 +381,9 @@ async def get_savings_info(
         total_funded = sum(float(g.current or 0) for g in goals)
         completed_goals = sum(1 for g in goals if g.is_completed)
         monthly_contributions = sum(float(g.monthly_contribution or 0) for g in goals)
-        overall_progress = (total_funded / total_goals_amount * 100) if total_goals_amount > 0 else 0
+        overall_progress = (
+            (total_funded / total_goals_amount * 100) if total_goals_amount > 0 else 0
+        )
 
         return SavingsInfoResponse(
             total_funds=float(savings.total_funds or 0),
@@ -412,7 +418,7 @@ async def add_savings(
             raise HTTPException(status_code=400, detail="Amount must be positive")
 
         savings = await get_or_create_savings(session, current_user.id)
-        
+
         savings.savings_available += savings_data.amount
         savings.total_funds += savings_data.amount
         savings.updated_at = datetime.utcnow()
@@ -469,7 +475,9 @@ async def update_savings(
         total_funded = sum(float(g.current or 0) for g in goals)
         completed_goals = sum(1 for g in goals if g.is_completed)
         monthly_contributions = sum(float(g.monthly_contribution or 0) for g in goals)
-        overall_progress = (total_funded / total_goals_amount * 100) if total_goals_amount > 0 else 0
+        overall_progress = (
+            (total_funded / total_goals_amount * 100) if total_goals_amount > 0 else 0
+        )
 
         return SavingsInfoResponse(
             total_funds=float(savings.total_funds or 0),
