@@ -1,50 +1,98 @@
 transaction_date,description,amount
-2025-10-01,Salary Credit,+50000
-2025-10-02,Dmart Groceries,-1200
-2025-10-03,Local Kirana Store,-350
-2025-10-04,Jio Recharge,-799
-2025-10-05,Zomato Order,-450
-2025-10-06,Swiggy Delivery,-380
-2025-10-07,Petrol Pump HP,-2500
-2025-10-08,Electricity Bill,-1850
-2025-10-09,Water Bill,-200
-2025-10-10,Netflix Subscription,-649
-2025-10-11,Amazon Prime,-1499
-2025-10-12,Spotify Premium,-119
-2025-10-13,Uber Ride,-250
-2025-10-14,Ola Cab,-180
-2025-10-15,Medical Store Apollo,-890
-2025-10-16,Movie PVR Cinemas,-1200
-2025-10-17,Restaurant Dinner,-1500
-2025-10-18,Coffee Starbucks,-450
-2025-10-19,Gym Membership,-2000
-2025-10-20,Amazon Shopping,-3500
-2025-10-21,Flipkart Electronics,-8500
-2025-10-22,Myntra Clothing,-2200
-2025-10-23,Big Bazaar Groceries,-1800
-2025-10-24,Rent Payment,-15000
-2025-10-25,Internet Airtel,-999
-2025-10-26,Gas Cylinder,-950
-2025-10-27,Zepto Groceries,-550
-2025-10-28,Blinkit Quick Commerce,-320
-2025-10-29,Dominos Pizza,-650
-2025-10-30,McDonalds,-280
-2025-10-31,Train Ticket IRCTC,-1200
-2025-11-01,Dmart Groceries,-1100
-2025-11-02,Local Kirana,-200
-2025-11-03,Petrol Indian Oil,-2200
-2025-11-04,Uber Eats,-420
-2025-11-05,Jio Bill,-800
-2025-11-06,Book Store Crossword,-750
-2025-11-07,Decathlon Sports,-3200
-2025-11-08,Salary Credit,+50000
-2025-11-10,Zomato,-400
-2025-11-12,Amazon Shopping,-1500
-2025-11-14,Doctor Consultation,-800
-2025-11-15,Electricity Bill,-1200
-2025-11-18,Swiggy,-350
-2025-11-20,Petrol,-2000
-2025-11-22,Netflix Subscription,-649
-2025-11-25,Medical Store,-450
-2025-11-28,Movie Tickets,-600
-2025-11-30,Gym Membership,-1500
+2025-11-01,Salary Credit,+52000
+2025-11-01,Dmart Groceries,-1350
+2025-11-02,Local Kirana Store,-420
+2025-11-02,Swiggy Dinner,-485
+2025-11-03,Jio Recharge,-799
+2025-11-03,Petrol Pump HP,-2650
+2025-11-04,Zomato Lunch,-380
+2025-11-04,Coffee CCD,-250
+2025-11-05,Electricity Bill MSEB,-1980
+2025-11-05,Water Bill,-220
+2025-11-06,Uber Ride,-320
+2025-11-06,Amazon Shopping,-4200
+2025-11-07,Netflix Subscription,-649
+2025-11-07,Amazon Prime,-1499
+2025-11-08,Spotify Premium,-119
+2025-11-08,YouTube Premium,-129
+2025-11-09,Big Bazaar Groceries,-1950
+2025-11-09,Medical Store Apollo,-1150
+2025-11-10,Ola Cab,-280
+2025-11-10,Movie PVR Cinemas,-1400
+2025-11-11,Restaurant Barbeque Nation,-2200
+2025-11-11,Dessert Baskin Robbins,-380
+2025-11-12,Gym Membership,-2200
+2025-11-12,Protein Supplement,-1850
+2025-11-13,Flipkart Electronics,-12500
+2025-11-13,Amazon Books,-890
+2025-11-14,Myntra Winter Clothing,-3800
+2025-11-14,Ajio Fashion,-2100
+2025-11-15,Rent Payment,-16000
+2025-11-15,Maintenance Charges,-2500
+2025-11-16,Internet Airtel Fiber,-1099
+2025-11-16,DTH Recharge,-450
+2025-11-17,Gas Cylinder Indane,-1050
+2025-11-17,LPG Booking Fee,-25
+2025-11-18,Zepto Groceries,-680
+2025-11-18,Blinkit Quick Commerce,-420
+2025-11-19,Swiggy Instamart,-550
+2025-11-19,Dunzo Delivery,-180
+2025-11-20,Dominos Pizza,-750
+2025-11-20,KFC Bucket,-580
+2025-11-21,McDonalds Breakfast,-320
+2025-11-21,Starbucks Coffee,-520
+2025-11-22,Train Ticket IRCTC,-1850
+2025-11-22,Flight Ticket IndiGo,-8500
+2025-11-23,Hotel Booking OYO,-3200
+2025-11-23,Uber Airport,-650
+2025-11-24,Dmart Groceries,-1580
+2025-11-24,Snacks Shopping,-850
+2025-11-25,Restaurant Dinner,-3500
+2025-11-25,Gifts Amazon,-5200
+2025-11-26,Movie Tickets INOX,-1600
+2025-11-26,Popcorn Combo,-450
+2025-11-27,Petrol Indian Oil,-2800
+2025-11-27,Car Wash,-350
+2025-11-28,Zomato Dinner,-520
+2025-11-28,Ice Cream Parlor,-280
+2025-11-29,Medical Consultation,-1200
+2025-11-29,Pharmacy Medicines,-950
+2025-11-30,Salon Haircut,-450
+2025-11-30,Spa Massage,-2200
+2025-12-01,Salary Credit,+52000
+2025-12-01,Dmart Monthly Shopping,-2800
+2025-12-02,Morning Coffee,-150
+2025-12-02,Lunch Swiggy,-380
+2025-11-03,Insurance Premium LIC,-3500
+2025-11-10,Credit Card Bill HDFC,-8500
+2025-11-15,Mutual Fund SIP ICICI,-5000
+2025-11-15,PPF Deposit,-2000
+2025-11-20,Stock Investment Zerodha,-10000
+2025-11-25,Gold Purchase Digital,-15000
+2025-11-05,Mobile Recharge Airtel,-299
+2025-11-08,LinkedIn Premium,-1999
+2025-11-12,Coursera Subscription,-3999
+2025-11-18,Book Store Crossword,-1250
+2025-11-22,Newspaper Subscription,-350
+2025-11-28,Magazine Annual,-890
+2025-11-04,Vegetable Market,-450
+2025-11-11,Fish Market,-680
+2025-11-18,Bakery Items,-320
+2025-11-25,Fruits Vendor,-550
+2025-11-06,Laundry Service,-450
+2025-11-13,Dry Cleaning,-380
+2025-11-20,Cobbler Shoe Repair,-150
+2025-11-27,Tailor Alterations,-280
+2025-11-09,Pharmacy Apollo,-620
+2025-11-16,Medical Lab Tests,-2800
+2025-11-23,Dentist Checkup,-1500
+2025-11-30,Eye Checkup Optical,-2200
+2025-11-07,Temple Donation,-501
+2025-11-14,Charity NGO,-1000
+2025-11-21,Church Offering,-500
+2025-11-28,Street Vendor Help,-200
+2025-11-02,Parking Fee,-80
+2025-11-09,Toll Tax,-150
+2025-11-16,Traffic Challan,-500
+2025-11-23,Vehicle Service,-4500
+2025-11-30,Car Insurance Renewal,-12500

@@ -19,20 +19,16 @@ engine: AsyncEngine = create_async_engine(
     future=True,
     connect_args={
         "ssl": ssl_context,
-        "statement_cache_size": 0,  # Disable prepared statements for Transaction Mode
+        "statement_cache_size": 0,  # ✅ Disable prepared statements for Transaction Mode
         "server_settings": {
             "application_name": "finance_assistant_app",
-            "jit": "off",
+            "jit": "off",  # Disable JIT for faster connections
         },
-        "timeout": 30,  # Connection timeout
-        "command_timeout": 60,  # Query execution timeout
-        # ✅ FIX: Add connection close timeout to prevent hanging
-        "server_version": None,  # Skip version check for faster connection
+        "timeout": 30,  # Connection timeout in seconds
+        "command_timeout": 60,  # Query execution timeout in seconds
     },
-    poolclass=NullPool,
-    # ✅ FIX: Add pool pre-ping to avoid stale connections
-    pool_pre_ping=False,  # Disabled for NullPool (no reuse)
-    # ✅ FIX: Set execution options
+    poolclass=NullPool,  # No connection pooling for Transaction Mode
+    pool_pre_ping=False,  # Not needed with NullPool
     execution_options={
         "isolation_level": "READ COMMITTED",
     },
@@ -67,15 +63,14 @@ async def get_session() -> AsyncSession:
     async with async_session() as session:
         try:
             yield session
-            # ✅ FIX: Commit any pending changes before closing
+            # ✅ Commit any pending changes before closing
             await session.commit()
         except Exception:
-            # ✅ FIX: Rollback on error
+            # ✅ Rollback on error
             await session.rollback()
             raise
         finally:
-            # ✅ FIX: Ensure session is properly closed
-            # This prevents the timeout error by gracefully closing the connection
+            # ✅ Ensure session is properly closed
             try:
                 await session.close()
             except Exception as close_error:
