@@ -395,6 +395,20 @@ export const goalsApi = {
     }
   },
 
+  // Alias for getGoals (used by Goals.jsx)
+  getAllGoals: async () => {
+    try {
+      const response = await api.get("/goals/");
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error fetching goals:",
+        error?.response?.data || error.message
+      );
+      throw error;
+    }
+  },
+
   // POST /api/v1/goals/ - Create a new goal
   createGoal: async (goalData) => {
     try {
@@ -437,16 +451,42 @@ export const goalsApi = {
     }
   },
 
-  // POST /api/v1/goals/{goal_id}/contribute - Contribute to a goal
+  // POST /api/v1/goals/{goal_id}/fund - Fund a goal from savings
+  fundGoal: async (goalId, amount) => {
+    try {
+      const response = await api.post(`/goals/${goalId}/fund`, { amount });
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error funding goal:",
+        error?.response?.data || error.message
+      );
+      throw error;
+    }
+  },
+
+  // POST /api/v1/goals/{goal_id}/contribute - Contribute to a goal (alias)
   contributeToGoal: async (goalId, amount) => {
     try {
-      const response = await api.post(`/goals/${goalId}/contribute`, {
-        amount,
-      });
+      const response = await api.post(`/goals/${goalId}/fund`, { amount });
       return response.data;
     } catch (error) {
       console.error(
         "Error contributing to goal:",
+        error?.response?.data || error.message
+      );
+      throw error;
+    }
+  },
+
+  // POST /api/v1/goals/savings/add - Add money to savings
+  addSavings: async (amount) => {
+    try {
+      const response = await api.post("/goals/savings/add", { amount });
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error adding savings:",
         error?.response?.data || error.message
       );
       throw error;
