@@ -157,6 +157,147 @@ async def get_or_create_savings(session: AsyncSession, user_id: int) -> Savings:
     return savings
 
 
+# ============ Savings Endpoints (MUST come before /{goal_id} routes!) ============
+# Note: Static routes must be defined before dynamic routes to avoid path conflicts
+
+
+@router.get("/savings/info", response_model=SavingsInfoResponse)
+async def get_savings_info(
+    current_user: User = Depends(deps.get_current_user),
+    session: AsyncSession = Depends(get_session),
+):
+    """Get user's savings information with computed goal stats."""
+    try:
+        savings = await get_or_create_savings(session, current_user.id)
+
+        # Get goals stats
+        goals_stmt = select(Goal).where(Goal.user_id == current_user.id)
+        goals_result = await session.execute(goals_stmt)
+        goals = goals_result.scalars().all()
+
+        total_goals_amount = sum(float(g.total or 0) for g in goals)
+        total_funded = sum(float(g.current or 0) for g in goals)
+        completed_goals = sum(1 for g in goals if g.is_completed)
+        monthly_contributions = sum(float(g.monthly_contribution or 0) for g in goals)
+        overall_progress = (
+            (total_funded / total_goals_amount * 100) if total_goals_amount > 0 else 0
+        )
+
+        return SavingsInfoResponse(
+            total_funds=float(savings.total_funds or 0),
+            savings_allocated=float(savings.savings_allocated or 0),
+            savings_available=float(savings.savings_available or 0),
+            monthly_income=float(savings.monthly_income or 0),
+            monthly_savings_rate=float(savings.monthly_savings_rate or 0),
+            total_goals_amount=total_goals_amount,
+            total_funded=total_funded,
+            overall_progress=round(overall_progress, 1),
+            completed_goals=completed_goals,
+            total_goals=len(goals),
+            monthly_contributions=monthly_contributions,
+            last_updated=savings.updated_at,
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to fetch savings info: {str(e)}",
+        )
+
+
+@router.post("/savings/add")
+async def add_savings(
+    savings_data: AddSavingsRequest,
+    current_user: User = Depends(deps.get_current_user),
+    session: AsyncSession = Depends(get_session),
+):
+    """Add money to available savings."""
+    try:
+        if savings_data.amount <= 0:
+            raise HTTPException(status_code=400, detail="Amount must be positive")
+
+        savings = await get_or_create_savings(session, current_user.id)
+
+        savings.savings_available += savings_data.amount
+        savings.total_funds += savings_data.amount
+        savings.updated_at = datetime.utcnow()
+
+        await session.commit()
+        await session.refresh(savings)
+
+        return {
+            "message": f"Successfully added ${savings_data.amount:.2f} to savings",
+            "savings_available": savings.savings_available,
+            "total_funds": savings.total_funds,
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to add savings: {str(e)}",
+        )
+
+
+@router.put("/savings/update", response_model=SavingsInfoResponse)
+async def update_savings(
+    savings_data: SavingsUpdate,
+    current_user: User = Depends(deps.get_current_user),
+    session: AsyncSession = Depends(get_session),
+):
+    """Update user's savings."""
+    try:
+        savings = await get_or_create_savings(session, current_user.id)
+
+        if savings_data.total_funds is not None:
+            savings.total_funds = savings_data.total_funds
+        if savings_data.savings_allocated is not None:
+            savings.savings_allocated = savings_data.savings_allocated
+        if savings_data.savings_available is not None:
+            savings.savings_available = savings_data.savings_available
+        if savings_data.monthly_income is not None:
+            savings.monthly_income = savings_data.monthly_income
+        if savings_data.monthly_savings_rate is not None:
+            savings.monthly_savings_rate = savings_data.monthly_savings_rate
+
+        savings.updated_at = datetime.utcnow()
+
+        await session.commit()
+        await session.refresh(savings)
+
+        # Get goals stats for response
+        goals_stmt = select(Goal).where(Goal.user_id == current_user.id)
+        goals_result = await session.execute(goals_stmt)
+        goals = goals_result.scalars().all()
+
+        total_goals_amount = sum(float(g.total or 0) for g in goals)
+        total_funded = sum(float(g.current or 0) for g in goals)
+        completed_goals = sum(1 for g in goals if g.is_completed)
+        monthly_contributions = sum(float(g.monthly_contribution or 0) for g in goals)
+        overall_progress = (
+            (total_funded / total_goals_amount * 100) if total_goals_amount > 0 else 0
+        )
+
+        return SavingsInfoResponse(
+            total_funds=float(savings.total_funds or 0),
+            savings_allocated=float(savings.savings_allocated or 0),
+            savings_available=float(savings.savings_available or 0),
+            monthly_income=float(savings.monthly_income or 0),
+            monthly_savings_rate=float(savings.monthly_savings_rate or 0),
+            total_goals_amount=total_goals_amount,
+            total_funded=total_funded,
+            overall_progress=round(overall_progress, 1),
+            completed_goals=completed_goals,
+            total_goals=len(goals),
+            monthly_contributions=monthly_contributions,
+            last_updated=savings.updated_at,
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to update savings: {str(e)}",
+        )
+
+
 # ============ Goals Endpoints ============
 
 
@@ -358,143 +499,3 @@ async def fund_goal(
     await session.refresh(goal)
 
     return {"message": "Goal funded successfully", "goal": goal_to_response(goal)}
-
-
-# ============ Savings Endpoints ============
-
-
-@router.get("/savings/info", response_model=SavingsInfoResponse)
-async def get_savings_info(
-    current_user: User = Depends(deps.get_current_user),
-    session: AsyncSession = Depends(get_session),
-):
-    """Get user's savings information with computed goal stats."""
-    try:
-        savings = await get_or_create_savings(session, current_user.id)
-
-        # Get goals stats
-        goals_stmt = select(Goal).where(Goal.user_id == current_user.id)
-        goals_result = await session.execute(goals_stmt)
-        goals = goals_result.scalars().all()
-
-        total_goals_amount = sum(float(g.total or 0) for g in goals)
-        total_funded = sum(float(g.current or 0) for g in goals)
-        completed_goals = sum(1 for g in goals if g.is_completed)
-        monthly_contributions = sum(float(g.monthly_contribution or 0) for g in goals)
-        overall_progress = (
-            (total_funded / total_goals_amount * 100) if total_goals_amount > 0 else 0
-        )
-
-        return SavingsInfoResponse(
-            total_funds=float(savings.total_funds or 0),
-            savings_allocated=float(savings.savings_allocated or 0),
-            savings_available=float(savings.savings_available or 0),
-            monthly_income=float(savings.monthly_income or 0),
-            monthly_savings_rate=float(savings.monthly_savings_rate or 0),
-            total_goals_amount=total_goals_amount,
-            total_funded=total_funded,
-            overall_progress=round(overall_progress, 1),
-            completed_goals=completed_goals,
-            total_goals=len(goals),
-            monthly_contributions=monthly_contributions,
-            last_updated=savings.updated_at,
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to fetch savings info: {str(e)}",
-        )
-
-
-@router.post("/savings/add")
-async def add_savings(
-    savings_data: AddSavingsRequest,
-    current_user: User = Depends(deps.get_current_user),
-    session: AsyncSession = Depends(get_session),
-):
-    """Add money to available savings."""
-    try:
-        if savings_data.amount <= 0:
-            raise HTTPException(status_code=400, detail="Amount must be positive")
-
-        savings = await get_or_create_savings(session, current_user.id)
-
-        savings.savings_available += savings_data.amount
-        savings.total_funds += savings_data.amount
-        savings.updated_at = datetime.utcnow()
-
-        await session.commit()
-        await session.refresh(savings)
-
-        return {
-            "message": f"Successfully added ${savings_data.amount:.2f} to savings",
-            "savings_available": savings.savings_available,
-            "total_funds": savings.total_funds,
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to add savings: {str(e)}",
-        )
-
-
-@router.put("/savings/update", response_model=SavingsInfoResponse)
-async def update_savings(
-    savings_data: SavingsUpdate,
-    current_user: User = Depends(deps.get_current_user),
-    session: AsyncSession = Depends(get_session),
-):
-    """Update user's savings."""
-    try:
-        savings = await get_or_create_savings(session, current_user.id)
-
-        if savings_data.total_funds is not None:
-            savings.total_funds = savings_data.total_funds
-        if savings_data.savings_allocated is not None:
-            savings.savings_allocated = savings_data.savings_allocated
-        if savings_data.savings_available is not None:
-            savings.savings_available = savings_data.savings_available
-        if savings_data.monthly_income is not None:
-            savings.monthly_income = savings_data.monthly_income
-        if savings_data.monthly_savings_rate is not None:
-            savings.monthly_savings_rate = savings_data.monthly_savings_rate
-
-        savings.updated_at = datetime.utcnow()
-
-        await session.commit()
-        await session.refresh(savings)
-
-        # Get goals stats for response
-        goals_stmt = select(Goal).where(Goal.user_id == current_user.id)
-        goals_result = await session.execute(goals_stmt)
-        goals = goals_result.scalars().all()
-
-        total_goals_amount = sum(float(g.total or 0) for g in goals)
-        total_funded = sum(float(g.current or 0) for g in goals)
-        completed_goals = sum(1 for g in goals if g.is_completed)
-        monthly_contributions = sum(float(g.monthly_contribution or 0) for g in goals)
-        overall_progress = (
-            (total_funded / total_goals_amount * 100) if total_goals_amount > 0 else 0
-        )
-
-        return SavingsInfoResponse(
-            total_funds=float(savings.total_funds or 0),
-            savings_allocated=float(savings.savings_allocated or 0),
-            savings_available=float(savings.savings_available or 0),
-            monthly_income=float(savings.monthly_income or 0),
-            monthly_savings_rate=float(savings.monthly_savings_rate or 0),
-            total_goals_amount=total_goals_amount,
-            total_funded=total_funded,
-            overall_progress=round(overall_progress, 1),
-            completed_goals=completed_goals,
-            total_goals=len(goals),
-            monthly_contributions=monthly_contributions,
-            last_updated=savings.updated_at,
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to update savings: {str(e)}",
-        )
