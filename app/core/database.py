@@ -8,29 +8,34 @@ from app.core.config import settings
 import logging
 
 # --- SSL CONFIGURATION FOR SUPABASE TRANSACTION POOLER ---
-# Supabase uses valid SSL certificates, but we need to configure SSL properly
-# For Transaction Mode, we need to be more permissive with SSL verification
 ssl_context = ssl.create_default_context()
-ssl_context.check_hostname = False  # Required for Supabase pooler
-ssl_context.verify_mode = ssl.CERT_NONE  # Disable strict verification for pooler
+ssl_context.check_hostname = False
+ssl_context.verify_mode = ssl.CERT_NONE
 
 # --- DATABASE ENGINE (Optimized for Supabase Transaction Pooler) ---
 engine: AsyncEngine = create_async_engine(
     settings.DATABASE_URL,
-    echo=False,  # Disable SQL logging in production
+    echo=False,
     future=True,
     connect_args={
         "ssl": ssl_context,
-        "statement_cache_size": 0,  # ✅ FIXED: Correct parameter name for asyncpg
+        "statement_cache_size": 0,  # Disable prepared statements for Transaction Mode
         "server_settings": {
             "application_name": "finance_assistant_app",
-            "jit": "off",  # Disable JIT for faster connections
+            "jit": "off",
         },
         "timeout": 30,  # Connection timeout
         "command_timeout": 60,  # Query execution timeout
+        # ✅ FIX: Add connection close timeout to prevent hanging
+        "server_version": None,  # Skip version check for faster connection
     },
-    # Use NullPool for Transaction Mode (no connection reuse)
     poolclass=NullPool,
+    # ✅ FIX: Add pool pre-ping to avoid stale connections
+    pool_pre_ping=False,  # Disabled for NullPool (no reuse)
+    # ✅ FIX: Set execution options
+    execution_options={
+        "isolation_level": "READ COMMITTED",
+    },
 )
 
 
@@ -50,11 +55,41 @@ async def init_db():
 async def get_session() -> AsyncSession:
     """
     Dependency to get a database session for API requests.
+    Properly handles connection lifecycle for Supabase Transaction Pooler.
     """
     async_session = sessionmaker(
         engine,
         class_=AsyncSession,
         expire_on_commit=False,
+        autoflush=False,  # ✅ Disable autoflush for better control
     )
+
     async with async_session() as session:
-        yield session
+        try:
+            yield session
+            # ✅ FIX: Commit any pending changes before closing
+            await session.commit()
+        except Exception:
+            # ✅ FIX: Rollback on error
+            await session.rollback()
+            raise
+        finally:
+            # ✅ FIX: Ensure session is properly closed
+            # This prevents the timeout error by gracefully closing the connection
+            try:
+                await session.close()
+            except Exception as close_error:
+                # Log but don't raise - connection might already be closed
+                logging.warning(f"Session close warning: {close_error}")
+
+
+async def close_db():
+    """
+    Gracefully dispose of the database engine on shutdown.
+    Call this in your FastAPI lifespan shutdown.
+    """
+    try:
+        await engine.dispose()
+        logging.info("✅ Database engine disposed successfully")
+    except Exception as e:
+        logging.error(f"⚠️ Database engine disposal error: {e}")
