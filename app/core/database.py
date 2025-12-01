@@ -1,33 +1,33 @@
 import ssl
 from sqlmodel import SQLModel
-from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
 from sqlalchemy.orm import sessionmaker
 from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy.pool import NullPool
 from app.core.config import settings
+import logging
 
 # --- SSL CONFIGURATION ---
-# Necessary for many cloud providers (Supabase, Neon, Render) when connecting from local
 ssl_context = ssl.create_default_context()
-ssl_context.check_hostname = False
-ssl_context.verify_mode = ssl.CERT_NONE
+ssl_context.check_hostname = True  # Enable hostname verification in production
+ssl_context.verify_mode = ssl.CERT_REQUIRED  # Use CERT_REQUIRED in production
 
 # --- DATABASE ENGINE ---
-engine = create_async_engine(
+engine: AsyncEngine = create_async_engine(
     settings.DATABASE_URL,
-    echo=True,
+    echo=False,  # Disable in production
     future=True,
-    # Pass arguments directly to the asyncpg driver
     connect_args={
         "ssl": ssl_context,
-        "timeout": 60,  # ✅ Give DB 60s to wake up/connect (Default is often too short)
-        "command_timeout": 30,  # ✅ Allow 30s for queries to execute
-        "prepared_statements": False,
+        "server_settings": {
+            "application_name": "finance_assistant_app",
+            "jit": "off",
+        },
+        "timeout": 30,
+        "command_timeout": 60,
+        "prepared_statement_cache_size": 0,
     },
-    # Connection Pooling (Strict limits to avoid "MaxClients" errors)
-    pool_size=5,  # Max 5 permanent connections
-    max_overflow=0,  # 0 temporary connections (Hard limit)
-    pool_pre_ping=True,  # Verify connection is alive before using
-    pool_recycle=300,  # Recycle connections every 5 mins
+    poolclass=NullPool,
 )
 
 
@@ -39,7 +39,7 @@ async def init_db():
         async with engine.begin() as conn:
             await conn.run_sync(SQLModel.metadata.create_all)
     except Exception as e:
-        print(f"❌ Database Initialization Failed: {e}")
+        logging.error(f"❌ Database Initialization Failed: {e}")
         raise e
 
 
