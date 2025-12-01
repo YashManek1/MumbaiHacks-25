@@ -21,13 +21,13 @@ engine: AsyncEngine = create_async_engine(
     future=True,
     connect_args={
         "ssl": ssl_context,
+        "statement_cache_size": 0,  # ✅ FIXED: Correct parameter name for asyncpg
         "server_settings": {
             "application_name": "finance_assistant_app",
             "jit": "off",  # Disable JIT for faster connections
         },
         "timeout": 30,  # Connection timeout
         "command_timeout": 60,  # Query execution timeout
-        "prepared_statement_cache_size": 0,  # CRITICAL: Disable prepared statements
     },
     # Use NullPool for Transaction Mode (no connection reuse)
     poolclass=NullPool,
