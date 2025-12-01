@@ -4,17 +4,20 @@ from datetime import datetime, date
 
 
 class Goal(SQLModel, table=True):
+    """Savings goals - matches frontend expectations."""
     __tablename__ = "goals"
 
     id: Optional[int] = Field(default=None, primary_key=True)
     user_id: int = Field(foreign_key="user.id", index=True)
 
-    # Goal details
-    name: str = Field(max_length=100)
-    target_amount: float = Field(default=0.0)
-    current_amount: float = Field(default=0.0)
-    deadline: Optional[date] = Field(default=None)
-    category: Optional[str] = Field(default="general", max_length=50)
+    # Goal details (matching frontend field names)
+    title: str = Field(max_length=100)
+    total: float = Field(default=0.0)  # Target amount
+    current: float = Field(default=0.0)  # Current funded amount
+    priority: str = Field(default="medium", max_length=20)  # high, medium, low
+    monthly_contribution: float = Field(default=100.0)
+    icon: str = Field(default="🎯", max_length=10)
+    estimated_completion: Optional[str] = Field(default=None, max_length=50)
     is_completed: bool = Field(default=False)
 
     # Timestamps
