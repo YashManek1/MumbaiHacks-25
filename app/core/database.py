@@ -21,6 +21,7 @@ engine = create_async_engine(
         "ssl": ssl_context,
         "timeout": 60,  # ✅ Give DB 60s to wake up/connect (Default is often too short)
         "command_timeout": 30,  # ✅ Allow 30s for queries to execute
+        "prepared_statements": False,
     },
     # Connection Pooling (Strict limits to avoid "MaxClients" errors)
     pool_size=5,  # Max 5 permanent connections

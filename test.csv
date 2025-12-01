@@ -1,5 +1,50 @@
 transaction_date,description,amount
-2025-11-01,Dmart Groceries,500
-2025-11-02,Local Kirana,200
-2025-11-05,Jio Bill,800
-2025-11-10,Zomato,400
+2025-10-01,Salary Credit,+50000
+2025-10-02,Dmart Groceries,-1200
+2025-10-03,Local Kirana Store,-350
+2025-10-04,Jio Recharge,-799
+2025-10-05,Zomato Order,-450
+2025-10-06,Swiggy Delivery,-380
+2025-10-07,Petrol Pump HP,-2500
+2025-10-08,Electricity Bill,-1850
+2025-10-09,Water Bill,-200
+2025-10-10,Netflix Subscription,-649
+2025-10-11,Amazon Prime,-1499
+2025-10-12,Spotify Premium,-119
+2025-10-13,Uber Ride,-250
+2025-10-14,Ola Cab,-180
+2025-10-15,Medical Store Apollo,-890
+2025-10-16,Movie PVR Cinemas,-1200
+2025-10-17,Restaurant Dinner,-1500
+2025-10-18,Coffee Starbucks,-450
+2025-10-19,Gym Membership,-2000
+2025-10-20,Amazon Shopping,-3500
+2025-10-21,Flipkart Electronics,-8500
+2025-10-22,Myntra Clothing,-2200
+2025-10-23,Big Bazaar Groceries,-1800
+2025-10-24,Rent Payment,-15000
+2025-10-25,Internet Airtel,-999
+2025-10-26,Gas Cylinder,-950
+2025-10-27,Zepto Groceries,-550
+2025-10-28,Blinkit Quick Commerce,-320
+2025-10-29,Dominos Pizza,-650
+2025-10-30,McDonalds,-280
+2025-10-31,Train Ticket IRCTC,-1200
+2025-11-01,Dmart Groceries,-1100
+2025-11-02,Local Kirana,-200
+2025-11-03,Petrol Indian Oil,-2200
+2025-11-04,Uber Eats,-420
+2025-11-05,Jio Bill,-800
+2025-11-06,Book Store Crossword,-750
+2025-11-07,Decathlon Sports,-3200
+2025-11-08,Salary Credit,+50000
+2025-11-10,Zomato,-400
+2025-11-12,Amazon Shopping,-1500
+2025-11-14,Doctor Consultation,-800
+2025-11-15,Electricity Bill,-1200
+2025-11-18,Swiggy,-350
+2025-11-20,Petrol,-2000
+2025-11-22,Netflix Subscription,-649
+2025-11-25,Medical Store,-450
+2025-11-28,Movie Tickets,-600
+2025-11-30,Gym Membership,-1500
