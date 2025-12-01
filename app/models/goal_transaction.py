@@ -1,25 +1,17 @@
+from sqlmodel import SQLModel, Field
 from typing import Optional
-from sqlmodel import Field, SQLModel
 from datetime import datetime
 
 
-class GoalTransactionBase(SQLModel):
-    type: str  # deposit, fund, refund
-    amount: float
-    description: Optional[str] = None
+class GoalTransaction(SQLModel, table=True):
+    __tablename__ = "goal_transactions"
 
-
-class GoalTransaction(GoalTransactionBase, table=True):
-    __tablename__ = "goal_transaction"
-    
     id: Optional[int] = Field(default=None, primary_key=True)
-    user_id: int = Field(foreign_key="user.id")
-    goal_id: Optional[int] = Field(default=None, foreign_key="goal.id")
+    goal_id: int = Field(foreign_key="goals.id", index=True)
+    
+    # Transaction details
+    amount: float = Field(default=0.0)
+    note: Optional[str] = Field(default=None, max_length=255)
+    
+    # Timestamps
     created_at: datetime = Field(default_factory=datetime.utcnow)
-
-
-class GoalTransactionRead(GoalTransactionBase):
-    id: int
-    user_id: int
-    goal_id: Optional[int]
-    created_at: datetime

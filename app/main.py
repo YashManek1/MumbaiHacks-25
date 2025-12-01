@@ -5,7 +5,6 @@ from app.core.config import settings
 from app.core.database import init_db, close_db
 from app.api.v1.api import api_router
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup: Create tables
@@ -13,7 +12,6 @@ async def lifespan(app: FastAPI):
     yield
     # Shutdown
     await close_db()  # ✅ Add graceful database shutdown
-
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -31,7 +29,6 @@ app.add_middleware(
 )
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
-
 
 @app.get("/")
 async def root():

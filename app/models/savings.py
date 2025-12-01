@@ -1,34 +1,20 @@
+from sqlmodel import SQLModel, Field
 from typing import Optional
-from sqlmodel import Field, SQLModel
 from datetime import datetime
 
 
-class SavingsBase(SQLModel):
-    total_funds: float = 0.0
-    savings_allocated: float = 0.0
-    savings_available: float = 0.0
-    monthly_savings_rate: float = 0.0
+class Savings(SQLModel, table=True):
+    __tablename__ = "savings"
 
-
-class Savings(SavingsBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    user_id: int = Field(foreign_key="user.id", unique=True)
+    user_id: int = Field(foreign_key="users.id", index=True, unique=True)
+
+    # Core savings fields
+    liquid_cash: float = Field(default=0.0)
+    emergency_fund: float = Field(default=0.0)
+    emergency_fund_target: float = Field(default=50000.0)
+    total_invested: float = Field(default=0.0)
+
+    # Timestamps
     created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
-
-
-class SavingsUpdate(SQLModel):
-    total_funds: Optional[float] = None
-    savings_allocated: Optional[float] = None
-    savings_available: Optional[float] = None
-    monthly_savings_rate: Optional[float] = None
-
-
-class SavingsRead(SavingsBase):
-    id: int
-    user_id: int
-
-
-class AddSavingsRequest(SQLModel):
-    amount: float
-    note: Optional[str] = None
+    updated_at: Optional[datetime] = Field(default=None)
