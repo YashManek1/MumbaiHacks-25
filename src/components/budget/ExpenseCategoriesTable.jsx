@@ -15,7 +15,7 @@ const ExpenseCategoriesTable = ({
   onDelete
 }) => {
   return (
-    <motion. div 
+    <motion.div 
       className="mb-8 bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
@@ -32,7 +32,7 @@ const ExpenseCategoriesTable = ({
           whileTap={{ scale: 0.98 }}
         >
           <FiPlus size={16} /> Add Category
-        </motion. button>
+        </motion.button>
       </div>
 
       {/* Table Header */}
@@ -46,9 +46,9 @@ const ExpenseCategoriesTable = ({
 
       {/* Table Body */}
       <div className="divide-y divide-gray-800/50">
-        {categories. map((category, idx) => (
+        {categories.map((category, idx) => (
           <ExpenseCategoryRow
-            key={category. id}
+            key={category.id}
             category={category}
             index={idx}
             isEditing={editingCategory?. id === category.id}

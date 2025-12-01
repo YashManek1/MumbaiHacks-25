@@ -52,7 +52,7 @@ const BudgetAlerts = ({ alerts, onDismiss }) => {
             >
               <FiX size={16} />
             </button>
-          </motion. div>
+          </motion.div>
         ))}
       </motion.div>
     </AnimatePresence>

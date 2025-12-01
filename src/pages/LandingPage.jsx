@@ -10,9 +10,9 @@ const containerVariants = {
     opacity: 1,
     transition: {
       staggerChildren: 0.1,
-      delayChildren: 0.2
-    }
-  }
+      delayChildren: 0.2,
+    },
+  },
 };
 
 const itemVariants = {
@@ -20,8 +20,8 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: "easeOut" }
-  }
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
 };
 
 const featureCardVariants = {
@@ -29,18 +29,18 @@ const featureCardVariants = {
   visible: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.5, ease: "easeOut" }
+    transition: { duration: 0.5, ease: "easeOut" },
   },
   hover: {
     y: -10,
-    transition: { duration: 0.3 }
-  }
+    transition: { duration: 0.3 },
+  },
 };
 
 const buttonVariants = {
   initial: { scale: 1 },
   hover: { scale: 1.05 },
-  tap: { scale: 0.95 }
+  tap: { scale: 0.95 },
 };
 
 export default function LandingPage() {
@@ -48,23 +48,23 @@ export default function LandingPage() {
     {
       icon: "📊",
       title: "Smart Financial Coaching",
-      desc: "AI-powered insights adapted to your unique income patterns and spending habits"
+      desc: "AI-powered insights adapted to your unique income patterns and spending habits",
     },
     {
       icon: "💰",
       title: "Gig Worker Friendly",
-      desc: "Handle variable income with confidence.  Track irregular earnings and plan accordingly"
+      desc: "Handle variable income with confidence.  Track irregular earnings and plan accordingly",
     },
     {
       icon: "🎯",
       title: "Goal-Oriented",
-      desc: "Set financial goals and let our AI coach guide you to achieve them proactively"
+      desc: "Set financial goals and let our AI coach guide you to achieve them proactively",
     },
     {
       icon: "📈",
       title: "Real-Time Insights",
-      desc: "Track transactions, analyze spending patterns, and get actionable recommendations"
-    }
+      desc: "Track transactions, analyze spending patterns, and get actionable recommendations",
+    },
   ];
 
   const businessModels = [
@@ -72,29 +72,35 @@ export default function LandingPage() {
       icon: "💳",
       title: "SaaS Licensing Fee",
       subtitle: "Primary Revenue Stream",
-      description: "A flat per-user, per-month fee for access to the core Agentic AI platform and its APIs.",
-      example: "IDFC FIRST pays $0.50/month per active mobile banking user provisioned for AI assistant feature",
+      description:
+        "A flat per-user, per-month fee for access to the core Agentic AI platform and its APIs.",
+      example:
+        "IDFC FIRST pays $0.50/month per active mobile banking user provisioned for AI assistant feature",
       metrics: ["Per-User Model", "Recurring Revenue", "Scalable"],
-      color: "from-blue-600 to-blue-700"
+      color: "from-blue-600 to-blue-700",
     },
     {
       icon: "🎁",
       title: "Cross-Sell/Referral Commission",
       subtitle: "Success-Based Revenue",
-      description: "A Success-Based Commission based on product conversion driven directly by the AI agent's recommendation.",
-      example: "Agent suggests $5,000 monthly surplus user invest in IDFC FIRST Mutual Fund SIP.  On conversion: bank pays 0.1% of invested amount",
+      description:
+        "A Success-Based Commission based on product conversion driven directly by the AI agent's recommendation.",
+      example:
+        "Agent suggests $5,000 monthly surplus user invest in IDFC FIRST Mutual Fund SIP.  On conversion: bank pays 0.1% of invested amount",
       metrics: ["Performance-Based", "Win-Win Model", "High ROI"],
-      color: "from-cyan-600 to-blue-600"
+      color: "from-cyan-600 to-blue-600",
     },
     {
       icon: "📊",
       title: "API Data Insight Fee",
       subtitle: "Premium Tier - DaaS",
-      description: "Fee for providing banks' internal teams with anonymized, aggregated financial intelligence (Data-as-a-Service).",
-      example: "Bank accesses dashboard showing 'Top 5 Overspending Categories' or 'Risk Score based on Income Volatility' across entire customer base",
+      description:
+        "Fee for providing banks' internal teams with anonymized, aggregated financial intelligence (Data-as-a-Service).",
+      example:
+        "Bank accesses dashboard showing 'Top 5 Overspending Categories' or 'Risk Score based on Income Volatility' across entire customer base",
       metrics: ["Data Analytics", "Higher Margins", "Strategic Value"],
-      color: "from-green-600 to-cyan-600"
-    }
+      color: "from-green-600 to-cyan-600",
+    },
   ];
 
   return (
@@ -117,7 +123,7 @@ export default function LandingPage() {
           animate="visible"
         >
           {/* Logo/Branding */}
-          <motion. div
+          <motion.div
             className="mb-8 flex items-center gap-3 justify-center cursor-target"
             variants={itemVariants}
           >
@@ -126,10 +132,20 @@ export default function LandingPage() {
               whileHover={{ boxShadow: "0 0 30px rgba(59, 130, 246, 0.7)" }}
               transition={{ duration: 0.3 }}
             >
-              <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none">
-                <path d="M3 12h18M6 6h12M6 18h12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <svg
+                className="w-8 h-8 text-white"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  d="M3 12h18M6 6h12M6 18h12"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
-            </motion. div>
+            </motion.div>
             <motion.span
               className="text-white font-bold text-3xl bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent cursor-target"
               animate={{ backgroundPosition: ["0%", "100%", "0%"] }}
@@ -155,14 +171,17 @@ export default function LandingPage() {
             className="text-lg md:text-xl text-gray-300 mb-8 font-medium drop-shadow-md max-w-3xl leading-relaxed cursor-target"
             variants={itemVariants}
           >
-            Designed for gig workers, informal sector employees, and everyday citizens. <br />
+            Designed for gig workers, informal sector employees, and everyday
+            citizens. <br />
             Adapt to real income variability and make{" "}
-            <span className="text-cyan-400 font-semibold">smarter financial decisions</span>{" "}
+            <span className="text-cyan-400 font-semibold">
+              smarter financial decisions
+            </span>{" "}
             proactively.
-          </motion. p>
+          </motion.p>
 
           {/* CTA Buttons */}
-          <motion. div
+          <motion.div
             className="flex flex-col sm:flex-row gap-4 justify-center mb-8"
             variants={itemVariants}
           >
@@ -198,7 +217,7 @@ export default function LandingPage() {
               >
                 Sign In
               </Link>
-            </motion. div>
+            </motion.div>
           </motion.div>
 
           {/* Trust indicators */}
@@ -209,17 +228,25 @@ export default function LandingPage() {
             {[
               "No credit card required",
               "Bank-level security",
-              "Free forever plan"
+              "Free forever plan",
             ].map((indicator, idx) => (
-              <motion. div
+              <motion.div
                 key={idx}
                 className="flex items-center gap-2 cursor-target"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.5 + idx * 0.1 }}
               >
-                <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16. 707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1. 414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                <svg
+                  className="w-4 h-4 text-green-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
                 </svg>
                 {indicator}
               </motion.div>
@@ -238,10 +265,11 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-4xl font-bold text-white mb-4 text-center cursor-target">
-              Why FinBuddy? 
+              Why FinBuddy?
             </h2>
             <p className="text-gray-400 text-center mb-16 max-w-2xl mx-auto cursor-target">
-              Designed specifically for your financial journey, whether you're earning regularly or on a flexible schedule. 
+              Designed specifically for your financial journey, whether you're
+              earning regularly or on a flexible schedule.
             </p>
           </motion.div>
 
@@ -262,11 +290,17 @@ export default function LandingPage() {
                 <motion.div
                   className="text-5xl mb-4"
                   animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: idx * 0.2 }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    delay: idx * 0.2,
+                  }}
                 >
                   {feature.icon}
                 </motion.div>
-                <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
+                <h3 className="text-xl font-bold text-white mb-3">
+                  {feature.title}
+                </h3>
                 <p className="text-gray-400 group-hover:text-gray-300 transition-colors">
                   {feature.desc}
                 </p>
@@ -301,20 +335,20 @@ export default function LandingPage() {
                 num: "01",
                 title: "Connect Your Finances",
                 desc: "Securely link your bank accounts.  We use industry-leading encryption to keep your data safe.",
-                icon: "🔗"
+                icon: "🔗",
               },
               {
                 num: "02",
                 title: "Get Personalized Insights",
                 desc: "Our AI analyzes your patterns and provides tailored recommendations for your situation.",
-                icon: "🤖"
+                icon: "🤖",
               },
               {
                 num: "03",
                 title: "Achieve Your Goals",
                 desc: "Follow guided steps, track progress, and watch your financial dreams become reality.",
-                icon: "🎯"
-              }
+                icon: "🎯",
+              },
             ].map((step, idx) => (
               <motion.div
                 key={idx}
@@ -325,10 +359,14 @@ export default function LandingPage() {
                 <motion.div
                   className="text-5xl mb-4"
                   animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: idx * 0.3 }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    delay: idx * 0.3,
+                  }}
                 >
                   {step.icon}
-                </motion. div>
+                </motion.div>
                 <motion.div
                   className="text-5xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-4"
                   initial={{ opacity: 0 }}
@@ -338,13 +376,15 @@ export default function LandingPage() {
                 >
                   {step.num}
                 </motion.div>
-                <h3 className="text-2xl font-bold text-white mb-3">{step.title}</h3>
+                <h3 className="text-2xl font-bold text-white mb-3">
+                  {step.title}
+                </h3>
                 <p className="text-gray-400 group-hover:text-gray-300 transition-colors">
                   {step.desc}
                 </p>
               </motion.div>
             ))}
-          </motion. div>
+          </motion.div>
         </div>
       </section>
 
@@ -362,7 +402,9 @@ export default function LandingPage() {
               Our Business Model
             </h2>
             <p className="text-gray-400 text-center max-w-3xl mx-auto cursor-target text-lg">
-              Multiple revenue streams designed to create sustainable value for financial institutions and deliver powerful AI-driven insights to millions of users.
+              Multiple revenue streams designed to create sustainable value for
+              financial institutions and deliver powerful AI-driven insights to
+              millions of users.
             </p>
           </motion.div>
 
@@ -374,14 +416,14 @@ export default function LandingPage() {
             viewport={{ once: true }}
           >
             {businessModels.map((model, idx) => (
-              <motion. div
+              <motion.div
                 key={idx}
                 className="group cursor-target relative"
                 variants={featureCardVariants}
                 whileHover="hover"
               >
                 {/* Card Background with Gradient Border Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl p-0. 5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl p-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent rounded-xl" />
                 </div>
 
@@ -391,13 +433,17 @@ export default function LandingPage() {
                   <motion.div
                     className="text-5xl mb-4"
                     animate={{ y: [0, -8, 0] }}
-                    transition={{ duration: 2.5, repeat: Infinity, delay: idx * 0.3 }}
+                    transition={{
+                      duration: 2.5,
+                      repeat: Infinity,
+                      delay: idx * 0.3,
+                    }}
                   >
                     {model.icon}
                   </motion.div>
 
                   {/* Subtitle Badge */}
-                  <motion. div
+                  <motion.div
                     className={`inline-block px-3 py-1 rounded-full text-xs font-semibold text-white bg-gradient-to-r ${model.color} mb-3 w-fit`}
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
@@ -408,7 +454,9 @@ export default function LandingPage() {
                   </motion.div>
 
                   {/* Title */}
-                  <h3 className="text-2xl font-bold text-white mb-2">{model.title}</h3>
+                  <h3 className="text-2xl font-bold text-white mb-2">
+                    {model.title}
+                  </h3>
 
                   {/* Description */}
                   <p className="text-gray-300 mb-4 leading-relaxed text-sm">
@@ -426,13 +474,19 @@ export default function LandingPage() {
                     viewport={{ once: true }}
                     transition={{ delay: idx * 0.15 }}
                   >
-                    <p className="text-xs font-semibold text-cyan-400 uppercase mb-2">Example</p>
-                    <p className="text-sm text-gray-300 leading-relaxed">{model.example}</p>
+                    <p className="text-xs font-semibold text-cyan-400 uppercase mb-2">
+                      Example
+                    </p>
+                    <p className="text-sm text-gray-300 leading-relaxed">
+                      {model.example}
+                    </p>
                   </motion.div>
 
                   {/* Metrics - Fixed 3 items max */}
                   <div className="space-y-2 mb-6">
-                    <p className="text-xs font-semibold text-gray-400 uppercase">Key Benefits</p>
+                    <p className="text-xs font-semibold text-gray-400 uppercase">
+                      Key Benefits
+                    </p>
                     <div className="flex flex-wrap gap-2">
                       {model.metrics.map((metric, midx) => (
                         <motion.span
@@ -467,7 +521,10 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="py-8 px-6 bg-gray-950 border-t border-gray-800 relative z-20">
         <div className="max-w-6xl mx-auto text-center text-gray-500">
-          <p>&copy; 2025 FinBuddy. All rights reserved.  | Your AI Financial Coach for Gig Economy</p>
+          <p>
+            &copy; 2025 FinBuddy.All rights reserved. | Your AI Financial Coach
+            for Gig Economy
+          </p>
           <motion.div
             className="mt-4 flex justify-center gap-6 text-sm"
             initial={{ opacity: 0 }}

@@ -235,7 +235,7 @@ const DashBoard = () => {
                   displayedActions.map(item => <ActionItem key={item.id} item={item} onAction={handleAgentAction} isHistory={activeTab === 'history'} />)
                 ) : (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-10 bg-gray-800/50 rounded-lg">
-                    <p className="text-gray-400">No {activeTab} actions. All caught up!</p>
+                    <p className="text-gray-400">No {activeTab} actions.All caught up!</p>
                   </motion.div>
                 )}
               </AnimatePresence>

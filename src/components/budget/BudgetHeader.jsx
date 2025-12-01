@@ -55,7 +55,7 @@ const BudgetHeader = ({
                 onChange={(e) => setSelectedYear(parseInt(e.target.value))}
                 className="bg-transparent text-gray-200 text-sm focus:outline-none cursor-pointer"
               >
-                {years. map((year) => (
+                {years.map((year) => (
                   <option key={year} value={year} className="bg-gray-800">
                     {year}
                   </option>
@@ -102,7 +102,7 @@ const BudgetHeader = ({
                 <FiCpu size={16} />
               )}
               <span>{hasOverages ? 'Review Overages' : 'AI Analysis'}</span>
-            </motion. button>
+            </motion.button>
           </div>
         </div>
       </div>

@@ -56,7 +56,7 @@ export default function LoginPage() {
       });
 
       if (!response.ok) {
-        let errorDetail = "Login failed. Check credentials.";
+        let errorDetail = "Login failed.Check credentials.";
         // Check if the response has a JSON content type before trying to parse it.
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.indexOf("application/json") !== -1) {

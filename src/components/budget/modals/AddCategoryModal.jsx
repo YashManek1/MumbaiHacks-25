@@ -36,7 +36,7 @@ const AddCategoryModal = ({ isOpen, onClose, newCategory, setNewCategory, onAdd 
               <input
                 type="text"
                 value={newCategory.name}
-                onChange={(e) => setNewCategory(prev => ({ ...prev, name: e. target.value }))}
+                onChange={(e) => setNewCategory(prev => ({ ...prev, name: e.target.value }))}
                 placeholder="e.g., Subscriptions"
                 className="w-full bg-gray-800 text-gray-200 px-3 py-2 rounded-lg border border-gray-700 focus:outline-none focus:border-gray-600"
               />
@@ -87,7 +87,7 @@ const AddCategoryModal = ({ isOpen, onClose, newCategory, setNewCategory, onAdd 
               whileTap={{ scale: 0.98 }}
             >
               Add Category
-            </motion. button>
+            </motion.button>
           </div>
         </motion.div>
       </motion.div>

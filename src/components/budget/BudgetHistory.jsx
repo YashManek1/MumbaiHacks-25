@@ -33,7 +33,7 @@ const BudgetHistory = ({ historyData, selectedYear }) => {
               >
                 <td className="py-3">{month.month} {selectedYear}</td>
                 <td className="py-3 text-right">₹{month.budget.toLocaleString()}</td>
-                <td className="py-3 text-right">₹{month.spent. toLocaleString()}</td>
+                <td className="py-3 text-right">₹{month.spent.toLocaleString()}</td>
                 <td className={`py-3 text-right font-medium ${
                   month.saved >= 0 ? 'text-green-400' : 'text-red-400'
                 }`}>

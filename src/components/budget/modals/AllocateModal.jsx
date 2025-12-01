@@ -23,7 +23,7 @@ const AllocateModal = ({ isOpen, onClose, allocateType, onAllocate }) => {
 
   return (
     <AnimatePresence>
-      <motion. div
+      <motion.div
         className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -79,14 +79,14 @@ const AllocateModal = ({ isOpen, onClose, allocateType, onAllocate }) => {
               {quickAmounts.map((amt) => (
                 <button
                   key={amt}
-                  onClick={() => setAmount(amt. toString())}
+                  onClick={() => setAmount(amt.toString())}
                   className={`px-4 py-2 rounded-lg text-sm transition ${
                     amount === amt.toString()
                       ? isSavings ?  'bg-green-600 text-white' : 'bg-orange-600 text-white'
                       : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                   }`}
                 >
-                  ₹{amt. toLocaleString()}
+                  ₹{amt.toLocaleString()}
                 </button>
               ))}
             </div>
@@ -102,7 +102,7 @@ const AllocateModal = ({ isOpen, onClose, allocateType, onAllocate }) => {
           </div>
 
           <div className="flex gap-3 mt-6">
-            <motion. button
+            <motion.button
               onClick={onClose}
               className="flex-1 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg transition"
               whileTap={{ scale: 0.98 }}
@@ -120,7 +120,7 @@ const AllocateModal = ({ isOpen, onClose, allocateType, onAllocate }) => {
               whileTap={{ scale: 0.98 }}
             >
               Add ₹{amount || '0'}
-            </motion. button>
+            </motion.button>
           </div>
         </motion.div>
       </motion.div>

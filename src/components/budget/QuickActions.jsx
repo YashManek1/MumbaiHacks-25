@@ -67,7 +67,7 @@ const QuickActions = ({
     <motion.div variants={itemVariants} className="mt-8">
       <h2 className="text-xl font-semibold text-gray-100 mb-4">Quick Actions</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-        {actions. map((action, index) => (
+        {actions.map((action, index) => (
           <motion.button
             key={index}
             onClick={action.onClick}

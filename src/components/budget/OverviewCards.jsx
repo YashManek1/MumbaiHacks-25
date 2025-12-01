@@ -27,7 +27,7 @@ const OverviewCards = ({ budgetData, totals, savingsPercentage }) => {
       iconColor: 'text-green-400',
       label: 'Savings This Month',
       value: `₹${budgetData.savings.contributed.toLocaleString()}`,
-      subtitle: `${savingsPercentage. toFixed(0)}% of goal`
+      subtitle: `${savingsPercentage.toFixed(0)}% of goal`
     },
     {
       icon: FiDollarSign,
@@ -46,7 +46,7 @@ const OverviewCards = ({ budgetData, totals, savingsPercentage }) => {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
     >
-      {cards. map((card, index) => (
+      {cards.map((card, index) => (
         <motion.div
           key={index}
           className="bg-gray-800/50 border border-gray-700/50 p-5 rounded-xl"
@@ -66,7 +66,7 @@ const OverviewCards = ({ budgetData, totals, savingsPercentage }) => {
           {card.subtitle && (
             <p className="text-xs text-gray-500 mt-1">{card.subtitle}</p>
           )}
-        </motion. div>
+        </motion.div>
       ))}
     </motion.div>
   );

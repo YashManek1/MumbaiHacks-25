@@ -37,14 +37,14 @@ const ExpenseCategoryRow = ({
         <span className="text-xl">{category.icon}</span>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <p className="text-gray-200 font-medium truncate">{category. name}</p>
+            <p className="text-gray-200 font-medium truncate">{category.name}</p>
             {category.adjusted && (
-              <span className="px-1. 5 py-0.5 bg-green-900/50 text-green-400 text-xs rounded">
+              <span className="px-1.5 py-0.5 bg-green-900/50 text-green-400 text-xs rounded">
                 Adjusted
               </span>
             )}
           </div>
-          <div className="mt-1 h-1. 5 bg-gray-800 rounded-full overflow-hidden">
+          <div className="mt-1 h-1.5 bg-gray-800 rounded-full overflow-hidden">
             <motion.div
               className={`h-full rounded-full ${getProgressColor()}`}
               initial={{ width: 0 }}
@@ -92,7 +92,7 @@ const ExpenseCategoryRow = ({
           <>
             <motion.button 
               onClick={onSave} 
-              className="p-1. 5 text-green-400 hover:bg-green-900/30 rounded" 
+              className="p-1.5 text-green-400 hover:bg-green-900/30 rounded" 
               whileTap={{ scale: 0.9 }}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -115,16 +115,16 @@ const ExpenseCategoryRow = ({
               whileTap={{ scale: 0.9 }}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15. 232 5.232l3.536 3.536m-2.036-5.036a2. 5 2.5 0 113.536 3.536L6.5 21. 036H3v-3.572L16.732 3.732z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
               </svg>
             </motion.button>
-            <motion. button 
-              onClick={() => onDelete(category. id)} 
+            <motion.button 
+              onClick={() => onDelete(category.id)} 
               className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-900/30 rounded" 
               whileTap={{ scale: 0.9 }}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-. 867 12.142A2 2 0 0116. 138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-. 867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
             </motion.button>
           </>

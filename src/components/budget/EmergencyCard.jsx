@@ -40,7 +40,7 @@ const EmergencyCard = ({ emergency, emergencyPercentage, onAddClick }) => {
         </div>
         <div className="flex justify-between text-xs text-gray-500">
           <span>Monthly: ₹{emergency.allocated.toLocaleString()}</span>
-          <span>{emergencyPercentage. toFixed(0)}% funded</span>
+          <span>{emergencyPercentage.toFixed(0)}% funded</span>
         </div>
       </div>
     </div>
