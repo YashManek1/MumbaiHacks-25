@@ -69,10 +69,9 @@ class ContributionResponse(BaseModel):
 
 
 class SavingsInfoResponse(BaseModel):
-    liquid_cash: float
-    emergency_fund: float
-    emergency_fund_target: float
-    total_invested: float
+    savings_allocated: float
+    savings_available: float
+    monthly_savings_rate: float
     last_updated: Optional[datetime] = None
 
     class Config:
@@ -80,10 +79,9 @@ class SavingsInfoResponse(BaseModel):
 
 
 class SavingsUpdate(BaseModel):
-    liquid_cash: Optional[float] = None
-    emergency_fund: Optional[float] = None
-    emergency_fund_target: Optional[float] = None
-    total_invested: Optional[float] = None
+    savings_allocated: Optional[float] = None
+    savings_available: Optional[float] = None
+    monthly_savings_rate: Optional[float] = None
 
 
 # ============ Helper Functions ============
@@ -124,10 +122,9 @@ async def get_or_create_savings(session: AsyncSession, user_id: int) -> Savings:
     if not savings:
         savings = Savings(
             user_id=user_id,
-            liquid_cash=0.0,
-            emergency_fund=0.0,
-            emergency_fund_target=50000.0,
-            total_invested=0.0,
+            savings_allocated=0.0,
+            savings_available=0.0,
+            monthly_savings_rate=0.0,
         )
         session.add(savings)
         await session.commit()
@@ -356,10 +353,9 @@ async def get_savings_info(
         savings = await get_or_create_savings(session, current_user.id)
 
         return SavingsInfoResponse(
-            liquid_cash=float(savings.liquid_cash or 0),
-            emergency_fund=float(savings.emergency_fund or 0),
-            emergency_fund_target=float(savings.emergency_fund_target or 50000),
-            total_invested=float(savings.total_invested or 0),
+            savings_allocated=float(savings.savings_allocated or 0),
+            savings_available=float(savings.savings_available or 0),
+            monthly_savings_rate=float(savings.monthly_savings_rate or 0),
             last_updated=savings.updated_at if hasattr(savings, "updated_at") else None,
         )
     except Exception as e:
@@ -379,14 +375,12 @@ async def update_savings(
     try:
         savings = await get_or_create_savings(session, current_user.id)
 
-        if savings_data.liquid_cash is not None:
-            savings.liquid_cash = savings_data.liquid_cash
-        if savings_data.emergency_fund is not None:
-            savings.emergency_fund = savings_data.emergency_fund
-        if savings_data.emergency_fund_target is not None:
-            savings.emergency_fund_target = savings_data.emergency_fund_target
-        if savings_data.total_invested is not None:
-            savings.total_invested = savings_data.total_invested
+        if savings_data.savings_allocated is not None:
+            savings.savings_allocated = savings_data.savings_allocated
+        if savings_data.savings_available is not None:
+            savings.savings_available = savings_data.savings_available
+        if savings_data.monthly_savings_rate is not None:
+            savings.monthly_savings_rate = savings_data.monthly_savings_rate
 
         savings.updated_at = datetime.utcnow()
 
@@ -394,10 +388,9 @@ async def update_savings(
         await session.refresh(savings)
 
         return SavingsInfoResponse(
-            liquid_cash=float(savings.liquid_cash or 0),
-            emergency_fund=float(savings.emergency_fund or 0),
-            emergency_fund_target=float(savings.emergency_fund_target or 50000),
-            total_invested=float(savings.total_invested or 0),
+            savings_allocated=float(savings.savings_allocated or 0),
+            savings_available=float(savings.savings_available or 0),
+            monthly_savings_rate=float(savings.monthly_savings_rate or 0),
             last_updated=savings.updated_at,
         )
     except Exception as e:
